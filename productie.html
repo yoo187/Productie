@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Productie Registratie Ramen & Deuren</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background:#f5f5f5; padding:15px; color:#333; }
+
+  h1 { font-size:2rem; margin-bottom:20px; text-align:center; color:#2c3e50; }
+  h2 { font-size:1.5rem; margin-bottom:12px; color:#34495e; }
+  h3 { font-size:1.3rem; margin-top:15px; color:#34495e; }
+
+  /* Container voor cards - kolom zodat nieuwe klanten onder elkaar komen */
+  #productieCards { display: flex; flex-direction: column; gap:15px; }
+
+  .card {
+    background:#fff;
+    padding:15px;
+    border-radius:8px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.08);
+    width: 100%;
+    display:flex;
+    flex-direction:column;
+    border:1px solid #ddd;
+  }
+
+  .grid { display:flex; flex-direction:column; gap:10px; margin-bottom:10px; }
+  .grid div { flex:1; }
+
+  label { font-weight:bold; margin-bottom:3px; display:block; font-size:0.95rem; }
+  input, select { width:100%; padding:8px; border-radius:6px; border:1px solid #ccc; font-size:0.95rem; }
+
+  button { padding:10px 14px; border:none; border-radius:6px; font-size:1rem; cursor:pointer; transition: background 0.3s; }
+  .add { background:#2ecc71; color:#fff; margin-top:8px; }
+  .add:hover { background:#27ae60; }
+  .remove { background:#e74c3c; color:#fff; }
+  .remove:hover { background:#c0392b; }
+
+  strong { display:block; margin-top:8px; font-size:1rem; color:#333; }
+
+  .productie-row { display:flex; gap:8px; align-items:flex-end; margin-bottom:8px; flex-wrap: wrap; }
+  .productie-row > div { flex:1; min-width:100px; }
+
+  /* Mobile-first styling */
+  @media (max-width: 767px) {
+    body { font-size:16px; }
+    .card { padding:12px; margin-bottom:15px; }
+    .grid, .productie-row { flex-direction:column; gap:8px; }
+    input, select, button { font-size:1rem; padding:10px; }
+    .productie-row > div { width:100%; }
+  }
+
+  /* Print-optimalisatie: compact, alles op één A4 */
+  @media print {
+    body { background:#fff; padding:5px; font-size:9pt; color:#000; }
+    button { display:none; }
+    .card {
+      padding:5px;
+      border:1px solid #000;
+      border-radius:0;
+      box-shadow:none;
+      margin-bottom:5px;
+      page-break-inside: avoid;
+    }
+    .grid, .productie-row { gap:3px; }
+    input, select { font-size:8pt; padding:2px; border:none; background:none; }
+    label, strong { font-size:8pt; font-weight:bold; }
+    .productie-row > div { flex:1 1 auto; min-width:auto; }
+    h1, h2, h3 { font-size:10pt; color:#000; }
+  }
+</style>
+</head>
+<body>
+<h1>Productie Registratie</h1>
+
+<div class="card">
+<h2>Algemene gegevens</h2>
+<div class="grid">
+  <div>
+    <label>Naam</label>
+    <input type="text" id="naam" value="Denislav Dimitrov" readonly />
+  </div>
+  <div>
+    <label>Datum</label>
+    <input type="date" id="datum" />
+  </div>
+  <div>
+    <label>Vervoer</label>
+    <select id="vervoer">
+      <option value="Fiets">Fiets</option>
+      <option value="Wagen">Wagen</option>
+    </select>
+  </div>
+</div>
+</div>
+
+<div class="card">
+<h2>Productie</h2>
+<div id="productieCards"></div>
+<button class="add" onclick="nieuweProductieCard()">Nieuwe klant / dossier</button>
+<hr>
+<h3>Dag totaal: <span id="dagTotaal">0</span> uur</h3>
+<button onclick="printPDF()">Afdrukken / Opslaan als PDF</button>
+</div>
+
+<script>
+const types = ["Raam kader", "Raam vleugel", "Deur kader", "Deur vleugel", "Schuifraam kader", "Schuifraam vleugel", "T-profiel"];
+
+function nieuweProductieCard() {
+  const container = document.getElementById('productieCards');
+  if (!container) return;
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  card.innerHTML = '<div class="grid">' +
+    '<div><label>Klant</label><input type="text" placeholder="Klantnaam"></div>' +
+    '<div><label>Dossier nummer</label><input type="text" placeholder="Dossier nr"></div>' +
+  '</div>' +
+  '<div class="productie-row">' +
+    '<div><label>Type</label><select>' + types.map(t => '<option>'+t+'</option>').join('') + '</select></div>' +
+    '<div><label>Aantal</label><input type="number" min="0" value="0"></div>' +
+    '<div><label>Tijd (uren)</label><input type="number" min="0" step="0.01" value="0"></div>' +
+    '<div><button class="remove">X</button></div>' +
+  '</div>' +
+  '<button class="add">Rij toevoegen</button>' +
+  '<strong>Totaal klant: <span class="klantTotaal">0</span> uur</strong>';
+
+  container.appendChild(card);
+
+  const addBtn = card.querySelector('button.add');
+  addBtn.addEventListener('click', () => { addRij(card); bereken(); });
+
+  const removeBtn = card.querySelector('.remove');
+  removeBtn && removeBtn.addEventListener('click', () => { removeBtn.closest('.productie-row').remove(); bereken(); });
+
+  bereken();
+}
+
+function addRij(card) {
+  const row = document.createElement('div');
+  row.className = 'productie-row';
+  row.innerHTML = '<div><label>Type</label><select>' + types.map(t => '<option>'+t+'</option>').join('') + '</select></div>' +
+                  '<div><label>Aantal</label><input type="number" min="0" value="0"></div>' +
+                  '<div><label>Tijd (uren)</label><input type="number" min="0" step="0.01" value="0"></div>' +
+                  '<div><button class="remove">X</button></div>';
+  row.querySelector('.remove').addEventListener('click', () => { row.remove(); bereken(); });
+  card.appendChild(row);
+}
+
+function bereken() {
+  let dagTotaal = 0;
+  document.querySelectorAll('#productieCards .card').forEach(card => {
+    let klantTotaal = 0;
+    card.querySelectorAll('.productie-row').forEach(row => {
+      const tijdInp = row.querySelectorAll('input')[1];
+      const tijd = tijdInp ? Number(tijdInp.value || 0) : 0;
+      klantTotaal += tijd;
+    });
+    const totaalSpan = card.querySelector('.klantTotaal');
+    totaalSpan && (totaalSpan.textContent = klantTotaal.toFixed(2));
+    dagTotaal += klantTotaal;
+  });
+  const dagSpan = document.getElementById('dagTotaal');
+  dagSpan && (dagSpan.textContent = dagTotaal.toFixed(2));
+}
+
+function printPDF() { window.print(); }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const datum = document.getElementById('datum');
+  datum && (datum.valueAsDate = new Date());
+  nieuweProductieCard();
+});
+</script>
+</body>
+</html>

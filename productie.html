@@ -4,123 +4,121 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Productie Registratie Professioneel</title>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f2f4f7}
 .app{padding:12px}
+
 h1{text-align:center;font-size:1.6rem;margin:12px 0 20px}
 h2{font-size:1.3rem;margin-bottom:12px}
-h3{font-size:1.15rem;margin:16px 0 8px}
+h3{font-size:1.1rem;margin:10px 0}
 
-.day-container{margin-bottom:24px}
-.day-title{font-size:1.2rem;margin-bottom:12px;font-weight:bold}
+.day-title{font-weight:bold;margin:12px 0}
 
 .card{
   background:#fff;
-  border-radius:16px;
-  padding:16px;
-  margin-bottom:16px;
-  box-shadow:0 4px 10px rgba(0,0,0,.08);
-  opacity:0;
-  transform:translateY(-15px) scale(0.98);
-  filter:blur(4px);
-  animation:customerFadeIn 0.5s forwards;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:14px;
+  box-shadow:0 3px 8px rgba(0,0,0,.08);
 }
-.card.readonly{opacity:.95;transform:none;filter:none;}
 
-.grid{display:flex;flex-direction:column;gap:12px;margin-bottom:12px}
-label{font-weight:bold;font-size:.95rem;margin-bottom:4px;display:block}
+.card.readonly{opacity:.95}
+
+.grid{display:flex;flex-direction:column;gap:10px;margin-bottom:10px}
+
+label{font-weight:bold;font-size:.9rem;margin-bottom:3px;display:block}
+
 input,select,textarea{
   width:100%;
-  padding:14px;
-  font-size:1.05rem;
-  border-radius:12px;
+  padding:12px;
+  font-size:1rem;
+  border-radius:10px;
   border:1px solid #ccc;
-  transition:border 0.2s, box-shadow 0.2s, transform 0.2s, background 0.3s;
 }
+
 textarea{resize:vertical}
 
-button{padding:12px;font-size:1rem;border-radius:10px;border:none;cursor:pointer}
+button{
+  padding:10px;
+  font-size:.95rem;
+  border-radius:8px;
+  border:none;
+  cursor:pointer
+}
+
 .add{background:#2ecc71;color:#fff}
 .remove{background:#e74c3c;color:#fff}
 .done{background:#27ae60;color:#fff}
 .notdone{background:#c0392b;color:#fff}
-.delete-klant{background:#555;color:#fff;margin-top:10px}
+.delete-klant{background:#555;color:#fff;margin-top:8px}
 
 .productie-row{
   display:flex;
   flex-direction:column;
-  gap:10px;
-  padding:12px;
-  border-radius:12px;
+  gap:8px;
+  padding:10px;
+  border-radius:10px;
   border:2px solid #ddd;
-  margin-bottom:12px;
-  opacity:0;
-  transform:translateY(-10px);
-  transition:background 0.3s,border 0.3s,transform 0.2s,opacity 0.2s;
+  margin-bottom:10px;
 }
 
-/* Status kleuren */
-.productie-row.in-progress{border-color:#f39c12;background:#fff3e0;}
-.productie-row.done-row{border-color:#27ae60;background:#eafaf1;}
-.productie-row.notdone-row{border-color:#c0392b;background:#fde6e0;}
+/* Status */
+.in-progress{border-color:#f39c12;background:#fff3e0}
+.done-row{border-color:#27ae60;background:#eafaf1}
+.notdone-row{border-color:#c0392b;background:#fde6e0}
 
-/* Animaties */
-@keyframes customerFadeIn{
-  0%{opacity:0; transform:translateY(-15px) scale(0.98); filter:blur(4px);}
-  100%{opacity:1; transform:translateY(0) scale(1); filter:blur(0);}
-}
-@keyframes fadeInUp{
-  0%{opacity:0; transform:translateY(-15px);}
-  100%{opacity:1; transform:translateY(0);}
-}
-/* Professionele snelle glow animaties */
-@keyframes glowGreen{
-  0%{box-shadow:0 0 0 rgba(39,174,96,0);}
-  50%{box-shadow:0 0 6px rgba(39,174,96,0.6);}
-  100%{box-shadow:0 0 0 rgba(39,174,96,0);}
-}
-@keyframes glowRed{
-  0%{box-shadow:0 0 0 rgba(192,57,43,0);}
-  50%{box-shadow:0 0 6px rgba(192,57,43,0.6);}
-  100%{box-shadow:0 0 0 rgba(192,57,43,0);}
-}
-@keyframes fadeOut{0%{opacity:1; max-height:100px;}100%{opacity:0; max-height:0; margin:0; padding:0;}}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
 
-.productie-row.animate-fade{animation:fadeInUp 0.25s forwards;}
-.productie-row.animate-green{animation:glowGreen 0.3s ease-in-out 1;}
-.productie-row.animate-red{animation:glowRed 0.3s ease-in-out 1;}
-.productie-row.animate-fadeout{animation:fadeOut 0.4s forwards;}
-
-.actions{display:flex;gap:8px;flex-wrap:wrap}
-
-.search-block{background:#eef1f5;border-radius:16px;padding:16px;margin-bottom:20px}
+.search-block{
+  background:#eef1f5;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:18px
+}
 
 @media(min-width:768px){
   .grid{flex-direction:row}
   .productie-row{flex-direction:row;flex-wrap:wrap}
-  .productie-row>div{flex:1;min-width:140px}
+  .productie-row>div{flex:1;min-width:120px}
 }
 
-@media(max-width:767px){
-  input,select,textarea,button{
-    width:100% !important;
-    font-size:1.2rem;
-  }
-  .productie-row{flex-direction:column;}
-  .grid{flex-direction:column;}
-}
-
-/* Print styling */
+/* PRINT */
 @media print{
-  body{background:#fff;padding:0}
-  button{display:none !important}
-  input,select,textarea{border:none;background:transparent;font-size:1rem;width:auto;padding:0;display:inline}
-  .productie-row{border:none;margin:0 0 5px 0;padding:0;opacity:1;transform:none;}
-  .card{box-shadow:none;border:none;border-radius:0;margin:0 0 10px 0}
+  body{background:#fff}
+  button,.search-block{display:none!important}
+  .app{padding:0}
+
+  .card{
+    box-shadow:none;
+    border-radius:0;
+    padding:6px;
+    margin-bottom:6px;
+    break-inside:avoid;
+  }
+
+  .productie-row{
+    border:none;
+    padding:4px;
+    margin-bottom:4px;
+  }
+
+  input,textarea,select{
+    border:none;
+    padding:0;
+    font-size:.9rem;
+    background:transparent;
+  }
+
+  label{font-size:.75rem}
+  h1{font-size:1.2rem;margin-bottom:8px}
+  h2{font-size:1rem}
+  h3{font-size:.9rem}
 }
 </style>
 </head>
+
 <body>
 <div class="app">
 
@@ -142,144 +140,85 @@ button{padding:12px;font-size:1rem;border-radius:10px;border:none;cursor:pointer
 </div>
 
 <div class="search-block">
-<label>Zoeken</label>
+<label>Zoeken op dossier</label>
 <input placeholder="Dossier nummer..." oninput="zoekAlleDagen(this.value)">
 <div id="zoekResultaten"></div>
 </div>
 
-<div id="dagContainer" class="day-container">
 <div id="productieCards"></div>
+
 <button class="add" onclick="nieuweKlant()">Nieuwe klant / dossier</button>
-<h3>Dag totaal: <span id="dagTotaal">0.00</span></h3>
-<button onclick="window.print()">Afdrukken / Opslaan als PDF</button>
-</div>
+<h3>Dag totaal: <span id="dagTotaal">0.00</span> uur</h3>
+<button onclick="window.print()">Afdrukken / Opslaan PDF</button>
 
 </div>
 
 <script>
-// Types
 const types=[
 "Raam kader","Raam vleugel","Deur kader","Deur vleugel",
 "Schuifraam kader","Schuifraam vleugel","T-profiel",
 "Glaslatten","Beslag","Opkuisen","Montage"
 ];
 
-const datum = document.getElementById("datum");
-datum.valueAsDate = new Date();
+const datum=document.getElementById("datum");
+datum.valueAsDate=new Date();
+const key=()=>`productie-${datum.value}`;
 
-function key(d=datum.value){return "productie-"+d}
-
-// Rijen HTML
-function editRijHTML(r={}){
-  return `<div class="productie-row in-progress animate-fade">
-    <div><label>Type</label><select>${types.map(t=>`<option ${r.type==t?"selected":""}>${t}</option>`).join("")}</select></div>
-    <div><label>Aantal</label><input type="number" value="${r.aantal||0}"></div>
-    <div><label>Uren</label><input type="number" step="0.01" class="uren-input" value="${r.uren||0}"></div>
-    <div><label>Opmerking</label><textarea class="opmerking">${r.opmerking||""}</textarea></div>
-    <div class="actions">
-      <button class="done" onclick="markDone(this)">Voltooid</button>
-      <button class="notdone" onclick="markNotDone(this)">Niet voltooid</button>
-      <button class="remove" onclick="verwijderRij(this)">X</button>
-    </div>
-  </div>`;
+function format(d){
+ const x=new Date(d);
+ return `${String(x.getDate()).padStart(2,'0')}-${String(x.getMonth()+1).padStart(2,'0')}-${x.getFullYear()}`;
 }
 
-// Nieuwe klant
-function nieuweKlant(data=null){
-  const c=document.getElementById("productieCards");
-  const card=document.createElement("div");
-  card.className="card";
-  card.innerHTML=`
-    <div class="grid">
-      <div><label>Klant</label><input value="${data?.klant||""}"></div>
-      <div><label>Dossier</label><input value="${data?.dossier||""}"></div>
-    </div>
-    ${(data?.rijen||[{}]).map(r=>editRijHTML(r)).join("")}
-    <button class="add" onclick="addRij(this)">Rij toevoegen</button>
-    <strong>Totaal klant: <span class="klantTotaal">0.00</span></strong>
-    <button class="delete-klant" onclick="verwijderKlant(this)">Klant verwijderen</button>
-  `;
-  c.appendChild(card);
-  bind(card);
-  bereken();
+function nieuweKlant(data={}){
+ const c=document.createElement("div");
+ c.className="card";
+ c.innerHTML=`
+ <div class="grid">
+  <div><label>Klant</label><input value="${data.klant||""}"></div>
+  <div><label>Dossier</label><input value="${data.dossier||""}"></div>
+ </div>
+ ${(data.rijen||[{}]).map(r=>rijHTML(r)).join("")}
+ <button class="add" onclick="addRij(this)">Rij toevoegen</button>
+ <strong>Totaal klant: <span class="klantTotaal">0.00</span></strong>
+ <button class="delete-klant" onclick="this.parentElement.remove();opslaan()">Klant verwijderen</button>
+ `;
+ document.getElementById("productieCards").appendChild(c);
+ bereken(); opslaan();
 }
 
-// Functies
-function addRij(btn){ btn.insertAdjacentHTML("beforebegin",editRijHTML()); bind(btn.closest(".card")); }
-function bind(card){
-  card.querySelectorAll(".uren-input").forEach(inp=>{ ["input","blur"].forEach(ev=>{inp.addEventListener(ev,()=>{ opslaan(); });}); });
+function rijHTML(r={}){
+ return `
+ <div class="productie-row ${r.status||"in-progress"}">
+  <div><label>Type</label><input value="${r.type||""}"></div>
+  <div><label>Aantal</label><input value="${r.aantal||0}"></div>
+  <div><label>Uren</label><input class="uren" value="${r.uren||0}" oninput="opslaan()"></div>
+  <div><label>Opmerking</label><textarea>${r.opmerking||""}</textarea></div>
+ </div>`;
 }
-function verwijderKlant(btn){ if(confirm("Deze klant volledig verwijderen?")){btn.closest(".card").remove(); opslaan();} }
-function verwijderRij(btn){ const row = btn.closest(".productie-row"); row.classList.add("animate-fadeout"); setTimeout(()=>{row.remove(); opslaan();},400);}
-function markDone(btn){ const r = btn.closest(".productie-row"); r.classList.remove("in-progress","notdone-row"); r.classList.add("done-row"); r.dataset.status="done-row"; const opm = r.querySelector(".opmerking"); if(opm) opm.style.border="1px solid #ccc"; r.classList.add("animate-green"); setTimeout(()=>r.classList.remove("animate-green"),300); opslaan();}
-function markNotDone(btn){ const r = btn.closest(".productie-row"); r.classList.remove("in-progress","done-row"); r.classList.add("notdone-row"); r.dataset.status="notdone-row"; const opm = r.querySelector(".opmerking"); if(opm) opm.style.border="2px solid #900"; r.classList.add("animate-red"); setTimeout(()=>r.classList.remove("animate-red"),300); opslaan();}
 
 function bereken(){
-  let dag=0;
-  document.querySelectorAll("#productieCards .card").forEach(c=>{
-    let klant=0;
-    c.querySelectorAll(".uren-input").forEach(i=>klant+=Number(i.value||0));
-    c.querySelector(".klantTotaal").textContent=klant.toFixed(2);
-    dag+=klant;
-  });
-  document.getElementById("dagTotaal").textContent=dag.toFixed(2);
+ let dag=0;
+ document.querySelectorAll(".card").forEach(c=>{
+  let k=0;
+  c.querySelectorAll(".uren").forEach(u=>k+=Number(u.value||0));
+  c.querySelector(".klantTotaal")?.textContent=k.toFixed(2);
+  dag+=k;
+ });
+ document.getElementById("dagTotaal").textContent=dag.toFixed(2);
 }
 
 function opslaan(){
-  bereken();
-  const data={vervoer:vervoer.value,klanten:[...document.querySelectorAll("#productieCards .card")].map(c=>({
-    klant:c.querySelector(".grid input").value,
-    dossier:c.querySelectorAll(".grid input")[1].value,
-    rijen:[...c.querySelectorAll(".productie-row")].map(r=>({
-      type:r.querySelector("select")?r.querySelector("select").value:r.querySelector("input").value,
-      aantal:r.querySelector("input[type=number]").value,
-      uren:r.querySelector(".uren-input").value,
-      opmerking:r.querySelector(".opmerking").value,
-      status:r.dataset.status||"in-progress"
-    }))
-  }))};
-  localStorage.setItem(key(),JSON.stringify(data));
-}
-
-function laadDag(){ productieCards.innerHTML=""; const d=JSON.parse(localStorage.getItem(key())||"null"); if(!d){nieuweKlant();return} vervoer.value=d.vervoer; d.klanten.forEach(k=>nieuweKlant(k)); }
-
-function formatDDMMYYYY(d){ const date = new Date(d); const dag = String(date.getDate()).padStart(2,'0'); const maand = String(date.getMonth()+1).padStart(2,'0'); const jaar = date.getFullYear(); return `${dag}-${maand}-${jaar}`; }
-
-function zoekAlleDagen(val){
-  const res=document.getElementById("zoekResultaten");
-  res.innerHTML="";
-  if(!val) return;
-  Object.keys(localStorage).forEach(k=>{
-    if(!k.startsWith("productie-")) return;
-    const d = JSON.parse(localStorage[k]);
-    const datumKey = k.replace("productie-","");
-    const matches = d.klanten.filter(c=>c.dossier.toLowerCase().includes(val.toLowerCase()));
-    if(matches.length){
-      res.innerHTML += `<div class="day-container"><h3 class="day-title">📅 ${formatDDMMYYYY(datumKey)}</h3></div>`;
-      matches.forEach(m=>{
-        const container=res.querySelector(".day-container:last-child");
-        const card=document.createElement("div");
-        card.className="card readonly";
-        card.innerHTML=`<div class="grid">
-          <div><label>Klant</label><input value="${m.klant}" readonly></div>
-          <div><label>Dossier</label><input value="${m.dossier}" readonly></div>
-        </div>`+
-        m.rijen.map(r=>{
-          return `<div class="productie-row ${r.status||""}">
-            <div><label>Type</label><input value="${r.type}" readonly></div>
-            <div><label>Aantal</label><input value="${r.aantal}" readonly></div>
-            <div><label>Uren</label><input value="${r.uren}" readonly></div>
-            <div><label>Opmerking</label><textarea readonly>${r.opmerking}</textarea></div>
-          </div>`;
-        }).join("");
-        container.appendChild(card);
-      });
-    }
-  });
-}
-
-datum.addEventListener("change",()=>{ laadDag(); });
-laadDag();
-</script>
-</body>
-</html>
+ bereken();
+ const data=[...document.querySelectorAll("#productieCards .card")].map(c=>({
+  klant:c.querySelectorAll("input")[0].value,
+  dossier:c.querySelectorAll("input")[1].value,
+  rijen:[...c.querySelectorAll(".productie-row")].map(r=>({
+   type:r.querySelector("input").value,
+   aantal:r.querySelectorAll("input")[1].value,
+   uren:r.querySelectorAll("input")[2].value,
+   opmerking:r.querySelector("textarea").value,
+   status:r.classList.contains("done-row")?"done-row":
+          r.classList.contains("notdone-row")?"notdone-row":"in-progress"
+  }))
+ }));
+ localStorage

@@ -124,7 +124,7 @@ button{padding:12px;font-size:1rem;border-radius:10px;border:none;cursor:pointer
 <body>
 <div class="app">
 
-<h1>Productie Registratie per Dag</h1>
+<h1>Productie Registratie</h1>
 
 <div class="card">
 <h2>Algemene gegevens</h2>
@@ -142,13 +142,12 @@ button{padding:12px;font-size:1rem;border-radius:10px;border:none;cursor:pointer
 </div>
 
 <div class="search-block">
-<label>Zoek dossier (alle dagen)</label>
+<label>Zoeken</label>
 <input placeholder="Dossier nummer..." oninput="zoekAlleDagen(this.value)">
 <div id="zoekResultaten"></div>
 </div>
 
 <div id="dagContainer" class="day-container">
-<h2 class="day-title">📅 Huidige Dag</h2>
 <div id="productieCards"></div>
 <button class="add" onclick="nieuweKlant()">Nieuwe klant / dossier</button>
 <h3>Dag totaal: <span id="dagTotaal">0.00</span></h3>
@@ -162,7 +161,7 @@ button{padding:12px;font-size:1rem;border-radius:10px;border:none;cursor:pointer
 const types=[
 "Raam kader","Raam vleugel","Deur kader","Deur vleugel",
 "Schuifraam kader","Schuifraam vleugel","T-profiel",
-"Glaslatten","Beslag","Opkuisen","Montage"
+"Glaslatten","Beslag","Opkuisen","Montage","Andere"
 ];
 
 const datum = document.getElementById("datum");
@@ -284,3 +283,4 @@ laadDag();
 </script>
 </body>
 </html>
+

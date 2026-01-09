@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Productie Registratie Professioneel</title>
+<title>Productie Registratie</title>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f2f4f7}
@@ -21,22 +22,18 @@ h3{font-size:1.15rem;margin:16px 0 8px}
   padding:16px;
   margin-bottom:16px;
   box-shadow:0 4px 10px rgba(0,0,0,.08);
-  opacity:0;
-  transform:translateY(-15px) scale(0.98);
-  filter:blur(4px);
-  animation:customerFadeIn 0.5s forwards;
 }
-.card.readonly{opacity:.95;transform:none;filter:none;}
+
+.card.readonly{opacity:.95}
 
 .grid{display:flex;flex-direction:column;gap:12px;margin-bottom:12px}
-label{font-weight:bold;font-size:.95rem;margin-bottom:4px;display:block}
+label{font-weight:bold;font-size:.95rem}
 input,select,textarea{
   width:100%;
   padding:14px;
   font-size:1.05rem;
   border-radius:12px;
   border:1px solid #ccc;
-  transition:border 0.2s, box-shadow 0.2s, transform 0.2s, background 0.3s;
 }
 textarea{resize:vertical}
 
@@ -55,45 +52,13 @@ button{padding:12px;font-size:1rem;border-radius:10px;border:none;cursor:pointer
   border-radius:12px;
   border:2px solid #ddd;
   margin-bottom:12px;
-  opacity:0;
-  transform:translateY(-10px);
-  transition:background 0.3s,border 0.3s,transform 0.2s,opacity 0.2s;
 }
 
-/* Status kleuren */
 .productie-row.in-progress{border-color:#f39c12;background:#fff3e0;}
 .productie-row.done-row{border-color:#27ae60;background:#eafaf1;}
 .productie-row.notdone-row{border-color:#c0392b;background:#fde6e0;}
 
-/* Animaties */
-@keyframes customerFadeIn{
-  0%{opacity:0; transform:translateY(-15px) scale(0.98); filter:blur(4px);}
-  100%{opacity:1; transform:translateY(0) scale(1); filter:blur(0);}
-}
-@keyframes fadeInUp{
-  0%{opacity:0; transform:translateY(-15px);}
-  100%{opacity:1; transform:translateY(0);}
-}
-/* Professionele snelle glow animaties */
-@keyframes glowGreen{
-  0%{box-shadow:0 0 0 rgba(39,174,96,0);}
-  50%{box-shadow:0 0 6px rgba(39,174,96,0.6);}
-  100%{box-shadow:0 0 0 rgba(39,174,96,0);}
-}
-@keyframes glowRed{
-  0%{box-shadow:0 0 0 rgba(192,57,43,0);}
-  50%{box-shadow:0 0 6px rgba(192,57,43,0.6);}
-  100%{box-shadow:0 0 0 rgba(192,57,43,0);}
-}
-@keyframes fadeOut{0%{opacity:1; max-height:100px;}100%{opacity:0; max-height:0; margin:0; padding:0;}}
-
-.productie-row.animate-fade{animation:fadeInUp 0.25s forwards;}
-.productie-row.animate-green{animation:glowGreen 0.3s ease-in-out 1;}
-.productie-row.animate-red{animation:glowRed 0.3s ease-in-out 1;}
-.productie-row.animate-fadeout{animation:fadeOut 0.4s forwards;}
-
 .actions{display:flex;gap:8px;flex-wrap:wrap}
-
 .search-block{background:#eef1f5;border-radius:16px;padding:16px;margin-bottom:20px}
 
 @media(min-width:768px){
@@ -101,78 +66,63 @@ button{padding:12px;font-size:1rem;border-radius:10px;border:none;cursor:pointer
   .productie-row{flex-direction:row;flex-wrap:wrap}
   .productie-row>div{flex:1;min-width:140px}
 }
-
-@media(max-width:767px){
-  input,select,textarea,button{
-    width:100% !important;
-    font-size:1.2rem;
-  }
-  .productie-row{flex-direction:column;}
-  .grid{flex-direction:column;}
-}
-
-/* Print styling */
-@media print{
-  body{background:#fff;padding:0}
-  button{display:none !important}
-  input,select,textarea{border:none;background:transparent;font-size:1rem;width:auto;padding:0;display:inline}
-  .productie-row{border:none;margin:0 0 5px 0;padding:0;opacity:1;transform:none;}
-  .card{box-shadow:none;border:none;border-radius:0;margin:0 0 10px 0}
-}
 </style>
 </head>
+
 <body>
 <div class="app">
 
 <h1>Productie Registratie</h1>
 
 <div class="card">
-<h2>Algemene gegevens</h2>
-<div class="grid">
-  <div><label>Naam</label><input value="Denislav Dimitrov" readonly></div>
-  <div><label>Datum</label><input type="date" id="datum"></div>
-  <div>
-    <label>Vervoer</label>
-    <select id="vervoer">
-      <option>Fiets</option>
-      <option>Wagen</option>
-    </select>
+  <h2>Algemene gegevens</h2>
+  <div class="grid">
+    <div><label>Naam</label><input value="Denislav Dimitrov" readonly></div>
+    <div><label>Datum</label><input type="date" id="datum"></div>
+    <div>
+      <label>Vervoer</label>
+      <select id="vervoer">
+        <option>Fiets</option>
+        <option>Wagen</option>
+      </select>
+    </div>
   </div>
-</div>
 </div>
 
 <div class="search-block">
-<label>Zoeken</label>
-<input placeholder="Dossier nummer..." oninput="zoekAlleDagen(this.value)">
-<div id="zoekResultaten"></div>
+  <label>Zoeken</label>
+  <input placeholder="Dossier nummer..." oninput="zoekAlleDagen(this.value)">
+  <div id="zoekResultaten"></div>
 </div>
 
-<div id="dagContainer" class="day-container">
-<div id="productieCards"></div>
-<button class="add" onclick="nieuweKlant()">Nieuwe klant / dossier</button>
-<h3>Dag totaal: <span id="dagTotaal">0.00</span></h3>
-<button onclick="window.print()">Afdrukken / Opslaan als PDF</button>
+<div id="dagContainer">
+  <div id="productieCards"></div>
+  <button class="add" onclick="nieuweKlant()">Nieuwe klant</button>
+  <h3>Dag totaal: <span id="dagTotaal">0.00</span></h3>
+  <button onclick="window.print()">Afdrukken / PDF</button>
 </div>
 
 </div>
 
 <script>
-// Types
 const types=[
 "Raam kader","Raam vleugel","Deur kader","Deur vleugel",
 "Schuifraam kader","Schuifraam vleugel","T-profiel",
 "Glaslatten","Beslag","Opkuisen","Montage","Andere"
 ];
 
-const datum = document.getElementById("datum");
-datum.valueAsDate = new Date();
+const datum=document.getElementById("datum");
+datum.valueAsDate=new Date();
 
 function key(d=datum.value){return "productie-"+d}
 
-// Rijen HTML
 function editRijHTML(r={}){
-  return `<div class="productie-row in-progress animate-fade">
-    <div><label>Type</label><select>${types.map(t=>`<option ${r.type==t?"selected":""}>${t}</option>`).join("")}</select></div>
+  const status=r.status||"in-progress";
+  return `
+  <div class="productie-row ${status}" data-status="${status}">
+    <div><label>Type</label>
+      <select>${types.map(t=>`<option ${r.type===t?"selected":""}>${t}</option>`).join("")}</select>
+    </div>
     <div><label>Aantal</label><input type="number" value="${r.aantal||0}"></div>
     <div><label>Uren</label><input type="number" step="0.01" class="uren-input" value="${r.uren||0}"></div>
     <div><label>Opmerking</label><textarea class="opmerking">${r.opmerking||""}</textarea></div>
@@ -184,7 +134,6 @@ function editRijHTML(r={}){
   </div>`;
 }
 
-// Nieuwe klant
 function nieuweKlant(data=null){
   const c=document.getElementById("productieCards");
   const card=document.createElement("div");
@@ -204,22 +153,34 @@ function nieuweKlant(data=null){
   bereken();
 }
 
-// Functies
-function addRij(btn){ btn.insertAdjacentHTML("beforebegin",editRijHTML()); bind(btn.closest(".card")); }
+function addRij(btn){btn.insertAdjacentHTML("beforebegin",editRijHTML());bind(btn.closest(".card"))}
 function bind(card){
-  card.querySelectorAll(".uren-input").forEach(inp=>{ ["input","blur"].forEach(ev=>{inp.addEventListener(ev,()=>{ opslaan(); });}); });
+  card.querySelectorAll("input,select,textarea").forEach(i=>i.addEventListener("input",opslaan));
 }
-function verwijderKlant(btn){ if(confirm("Deze klant volledig verwijderen?")){btn.closest(".card").remove(); opslaan();} }
-function verwijderRij(btn){ const row = btn.closest(".productie-row"); row.classList.add("animate-fadeout"); setTimeout(()=>{row.remove(); opslaan();},400);}
-function markDone(btn){ const r = btn.closest(".productie-row"); r.classList.remove("in-progress","notdone-row"); r.classList.add("done-row"); r.dataset.status="done-row"; const opm = r.querySelector(".opmerking"); if(opm) opm.style.border="1px solid #ccc"; r.classList.add("animate-green"); setTimeout(()=>r.classList.remove("animate-green"),300); opslaan();}
-function markNotDone(btn){ const r = btn.closest(".productie-row"); r.classList.remove("in-progress","done-row"); r.classList.add("notdone-row"); r.dataset.status="notdone-row"; const opm = r.querySelector(".opmerking"); if(opm) opm.style.border="2px solid #900"; r.classList.add("animate-red"); setTimeout(()=>r.classList.remove("animate-red"),300); opslaan();}
+
+function verwijderKlant(btn){if(confirm("Klant verwijderen?")){btn.closest(".card").remove();opslaan()}}
+function verwijderRij(btn){btn.closest(".productie-row").remove();opslaan()}
+
+function markDone(btn){
+  const r=btn.closest(".productie-row");
+  r.className="productie-row done-row";
+  r.dataset.status="done-row";
+  opslaan();
+}
+function markNotDone(btn){
+  const r=btn.closest(".productie-row");
+  r.className="productie-row notdone-row";
+  r.dataset.status="notdone-row";
+  opslaan();
+}
 
 function bereken(){
   let dag=0;
-  document.querySelectorAll("#productieCards .card").forEach(c=>{
+  document.querySelectorAll(".card").forEach(c=>{
     let klant=0;
-    c.querySelectorAll(".uren-input").forEach(i=>klant+=Number(i.value||0));
-    c.querySelector(".klantTotaal").textContent=klant.toFixed(2);
+    c.querySelectorAll(".uren-input").forEach(i=>klant+=+i.value||0);
+    const el=c.querySelector(".klantTotaal");
+    if(el) el.textContent=klant.toFixed(2);
     dag+=klant;
   });
   document.getElementById("dagTotaal").textContent=dag.toFixed(2);
@@ -227,60 +188,71 @@ function bereken(){
 
 function opslaan(){
   bereken();
-  const data={vervoer:vervoer.value,klanten:[...document.querySelectorAll("#productieCards .card")].map(c=>({
-    klant:c.querySelector(".grid input").value,
-    dossier:c.querySelectorAll(".grid input")[1].value,
-    rijen:[...c.querySelectorAll(".productie-row")].map(r=>({
-      type:r.querySelector("select")?r.querySelector("select").value:r.querySelector("input").value,
-      aantal:r.querySelector("input[type=number]").value,
-      uren:r.querySelector(".uren-input").value,
-      opmerking:r.querySelector(".opmerking").value,
-      status:r.dataset.status||"in-progress"
+  const data={
+    vervoer:vervoer.value,
+    klanten:[...document.querySelectorAll("#productieCards .card")].map(c=>({
+      klant:c.querySelectorAll("input")[0].value,
+      dossier:c.querySelectorAll("input")[1].value,
+      rijen:[...c.querySelectorAll(".productie-row")].map(r=>({
+        type:r.querySelector("select").value,
+        aantal:r.querySelector("input[type=number]").value,
+        uren:r.querySelector(".uren-input").value,
+        opmerking:r.querySelector(".opmerking").value,
+        status:r.dataset.status||"in-progress"
+      }))
     }))
-  }))};
+  };
   localStorage.setItem(key(),JSON.stringify(data));
 }
 
-function laadDag(){ productieCards.innerHTML=""; const d=JSON.parse(localStorage.getItem(key())||"null"); if(!d){nieuweKlant();return} vervoer.value=d.vervoer; d.klanten.forEach(k=>nieuweKlant(k)); }
+function laadDag(){
+  productieCards.innerHTML="";
+  const d=JSON.parse(localStorage.getItem(key())||"null");
+  if(!d){nieuweKlant();return}
+  vervoer.value=d.vervoer;
+  d.klanten.forEach(k=>nieuweKlant(k));
+}
 
-function formatDDMMYYYY(d){ const date = new Date(d); const dag = String(date.getDate()).padStart(2,'0'); const maand = String(date.getMonth()+1).padStart(2,'0'); const jaar = date.getFullYear(); return `${dag}-${maand}-${jaar}`; }
+function formatDDMMYYYY(d){
+  const dt=new Date(d);
+  return `${dt.getDate().toString().padStart(2,"0")}-${(dt.getMonth()+1).toString().padStart(2,"0")}-${dt.getFullYear()}`;
+}
 
 function zoekAlleDagen(val){
   const res=document.getElementById("zoekResultaten");
+  const dagContainer=document.getElementById("dagContainer");
   res.innerHTML="";
-  if(!val) return;
+  if(!val){dagContainer.style.display="block";return}
+  dagContainer.style.display="none";
+
   Object.keys(localStorage).forEach(k=>{
-    if(!k.startsWith("productie-")) return;
-    const d = JSON.parse(localStorage[k]);
-    const datumKey = k.replace("productie-","");
-    const matches = d.klanten.filter(c=>c.dossier.toLowerCase().includes(val.toLowerCase()));
+    if(!k.startsWith("productie-"))return;
+    const d=JSON.parse(localStorage[k]);
+    const matches=d.klanten.filter(c=>c.dossier.toLowerCase().includes(val.toLowerCase()));
     if(matches.length){
-      res.innerHTML += `<div class="day-container"><h3 class="day-title">📅 ${formatDDMMYYYY(datumKey)}</h3></div>`;
+      res.innerHTML+=`<h3>📅 ${formatDDMMYYYY(k.replace("productie-",""))}</h3>`;
       matches.forEach(m=>{
-        const container=res.querySelector(".day-container:last-child");
-        const card=document.createElement("div");
-        card.className="card readonly";
-        card.innerHTML=`<div class="grid">
-          <div><label>Klant</label><input value="${m.klant}" readonly></div>
-          <div><label>Dossier</label><input value="${m.dossier}" readonly></div>
-        </div>`+
-        m.rijen.map(r=>{
-          return `<div class="productie-row ${r.status||""}">
-            <div><label>Type</label><input value="${r.type}" readonly></div>
-            <div><label>Aantal</label><input value="${r.aantal}" readonly></div>
-            <div><label>Uren</label><input value="${r.uren}" readonly></div>
-            <div><label>Opmerking</label><textarea readonly>${r.opmerking}</textarea></div>
-          </div>`;
-        }).join("");
-        container.appendChild(card);
+        res.innerHTML+=`
+        <div class="card readonly">
+          <div class="grid">
+            <div><label>Klant</label><input value="${m.klant}" readonly></div>
+            <div><label>Dossier</label><input value="${m.dossier}" readonly></div>
+          </div>
+          ${m.rijen.map(r=>`
+            <div class="productie-row ${r.status}">
+              <div>${r.type}</div>
+              <div>${r.aantal}</div>
+              <div>${r.uren}</div>
+              <div>${r.opmerking}</div>
+            </div>`).join("")}
+        </div>`;
       });
     }
   });
 }
 
-datum.addEventListener("change",()=>{ laadDag(); });
+datum.addEventListener("change",laadDag);
 laadDag();
 </script>
 </body>
 </html>
-

@@ -110,10 +110,16 @@ const productieCards=document.getElementById("productieCards");
 const zoekResultaten=document.getElementById("zoekResultaten");
 const dagTotaal=document.getElementById("dagTotaal");
 
-// Datum altijd op vandaag bij openen
-const vandaag = new Date();
-datum.valueAsDate = vandaag;
+// --- Belgische tijd fix ---
+function zetVandaag() {
+  const vandaag = new Date();
+  const yyyy = vandaag.getFullYear();
+  const mm = String(vandaag.getMonth() + 1).padStart(2,'0');
+  const dd = String(vandaag.getDate()).padStart(2,'0');
+  datum.value = `${yyyy}-${mm}-${dd}`;
+}
 
+// --- Functies ---
 function key(){ return "productie-"+datum.value; }
 
 function editRijHTML(r={}){return `<div class="productie-row added ${r.status||""}" data-status="${r.status||""}">
@@ -155,6 +161,7 @@ function nieuweKlant(data=null){
   bereken();
 }
 
+// Toggle, bind, status, berekening, opslaan, zoek etc.
 function toggleCard(h){h.closest(".card").classList.toggle("collapsed");opslaan();}
 function allesInklappen(){document.querySelectorAll(".card").forEach(c=>c.classList.add("collapsed"));}
 function allesUitklappen(){document.querySelectorAll(".card").forEach(c=>c.classList.remove("collapsed"));}
@@ -223,7 +230,7 @@ function opslaan(){
 }
 function laadDag(){
   productieCards.innerHTML=""; zoekResultaten.innerHTML="";
-  if(!datum.value) datum.valueAsDate = new Date();
+  if(!datum.value) zetVandaag();
   let data = JSON.parse(localStorage.getItem(key())||"null");
   if(!data){operatorNaam.value=""; vervoerSelect.value="Fiets"; nieuweKlant(); bereken(); return;}
   operatorNaam.value = data.operator || "";
@@ -232,7 +239,10 @@ function laadDag(){
   bereken();
 }
 datum.addEventListener("change", laadDag);
-window.addEventListener("load", laadDag);
+window.addEventListener("load", ()=>{
+  zetVandaag();
+  laadDag();
+});
 
 function zoekDossier(val){
   const zoekLower = val.toLowerCase();
@@ -281,3 +291,4 @@ function voegPrintInfoToe(){
 </script>
 </body>
 </html>
+

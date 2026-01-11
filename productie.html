@@ -111,9 +111,10 @@ const zoekResultaten=document.getElementById("zoekResultaten");
 const dagTotaal=document.getElementById("dagTotaal");
 
 // Datum altijd op vandaag bij openen
-if(!datum.value) datum.valueAsDate = new Date();
+const vandaag = new Date();
+datum.valueAsDate = vandaag;
 
-function key(){return "productie-"+datum.value;}
+function key(){ return "productie-"+datum.value; }
 
 function editRijHTML(r={}){return `<div class="productie-row added ${r.status||""}" data-status="${r.status||""}">
 <div><label>Type</label><select>${types.map(t=>`<option ${r.type===t?"selected":""}>${t}</option>`).join("")}</select></div>
@@ -223,11 +224,16 @@ function opslaan(){
 function laadDag(){
   productieCards.innerHTML=""; zoekResultaten.innerHTML="";
   if(!datum.value) datum.valueAsDate = new Date();
-  const d=JSON.parse(localStorage.getItem(key())||"null");
-  if(!d){operatorNaam.value=""; vervoerSelect.value="Fiets"; nieuweKlant(); bereken(); return;}
-  operatorNaam.value=d.operator||""; vervoerSelect.value=d.vervoer||"Fiets"; d.klanten.forEach(nieuweKlant); bereken();
+  let data = JSON.parse(localStorage.getItem(key())||"null");
+  if(!data){operatorNaam.value=""; vervoerSelect.value="Fiets"; nieuweKlant(); bereken(); return;}
+  operatorNaam.value = data.operator || "";
+  vervoerSelect.value = data.vervoer || "Fiets";
+  data.klanten.forEach(nieuweKlant);
+  bereken();
 }
 datum.addEventListener("change", laadDag);
+window.addEventListener("load", laadDag);
+
 function zoekDossier(val){
   const zoekLower = val.toLowerCase();
   zoekResultaten.innerHTML = "";
@@ -262,6 +268,7 @@ function zoekDossier(val){
     }
   });
 }
+
 function voegPrintInfoToe(){
   let printInfo=document.querySelector(".print-info");
   if(!printInfo){
@@ -271,7 +278,6 @@ function voegPrintInfoToe(){
     document.body.insertBefore(printInfo, document.body.firstChild.nextSibling);
   }
 }
-laadDag();
 </script>
 </body>
 </html>

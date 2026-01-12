@@ -4,38 +4,39 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Productie Registratie</title>
+
 <style>
-/* === STYLE ONGEWIJZIGD === */
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f2f4f7}
 .app{padding:12px}
 h1{text-align:center;font-size:1.6rem;margin:12px 0 20px}
-input, select, textarea{
+
+input,select,textarea{
   padding:12px;font-size:1rem;border-radius:10px;border:1px solid #ccc;
-  margin-bottom:12px;display:block;width:100%;font-family: Arial, sans-serif;
-  transition: all 0.3s ease;
+  margin-bottom:12px;width:100%;
 }
-input:focus, select:focus, textarea:focus{
-  border-color:#3498db;box-shadow:0 0 8px rgba(52,152,219,.2);outline:none;
-}
-textarea{resize: vertical;box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);}
 .controls{display:flex;gap:10px;margin-bottom:16px;justify-content:center;flex-wrap:wrap}
-button{padding:12px;border-radius:10px;border:none;cursor:pointer;font-size:1rem;
-  transition:all .3s ease;box-shadow:0 2px 6px rgba(0,0,0,.1);}
-button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.15);}
-button:active{transform:translateY(0) scale(0.97);}
-.add{background:#2ecc71;color:#fff}.remove{background:#e74c3c;color:#fff}
-.done{background:#27ae60;color:#fff}.notdone{background:#c0392b;color:#fff}
+button{padding:12px;border-radius:10px;border:none;cursor:pointer}
+.add{background:#2ecc71;color:#fff}
+.remove{background:#e74c3c;color:#fff}
+.done{background:#27ae60;color:#fff}
+.notdone{background:#c0392b;color:#fff}
 .delete-klant{background:#555;color:#fff}
-.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,.08);overflow:hidden;border-left:8px solid #ccc;transition:all .35s ease}
-.card.status-done{border-color:#27ae60}.card.status-notdone{border-color:#c0392b}.card.status-progress{border-color:#f39c12}
-.card-header{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#f7f9fc;padding:12px 14px;border-radius:12px;cursor:pointer}
-.card.collapsed .card-body{max-height:0;opacity:0;margin-top:0;}
-.grid{display:flex;flex-direction:column;gap:12px;margin-bottom:12px}
-.productie-row{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:12px;border:2px solid #ddd;margin-bottom:12px}
+
+.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:16px;border-left:8px solid #ccc}
+.card.status-done{border-color:#27ae60}
+.card.status-notdone{border-color:#c0392b}
+.card.status-progress{border-color:#f39c12}
+
+.card-header{display:flex;justify-content:space-between;cursor:pointer}
+.card.collapsed .card-body{display:none}
+
+.productie-row{border:2px solid #ddd;padding:10px;margin-bottom:10px;border-radius:10px}
 .productie-row.done-row{border-color:#27ae60;background:#eafaf1}
 .productie-row.notdone-row{border-color:#c0392b;background:#fde6e0}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.actions{display:flex;gap:8px}
+.grid{display:flex;gap:12px;flex-wrap:wrap}
 </style>
 </head>
 
@@ -68,15 +69,19 @@ button:active{transform:translateY(0) scale(0.97);}
 
 <div id="zoekResultaten"></div>
 <div id="productieCards"></div>
+
 <button class="add" onclick="nieuweKlant()">Nieuwe klant</button>
 <h3>Dag totaal: <span id="dagTotaal">0.00</span></h3>
 </div>
 
 <script>
-/* 🔒 ENIGE TOEVOEGING */
+/* =======================
+   VEILIGE STATE
+======================= */
 let isAanHetLaden = false;
 
 const types=["Raam kader","Raam vleugel","Deur kader","Deur vleugel","Schuifraam kader","Schuifraam vleugel","T-profiel","Glaslatten","Beslag","Opkuisen","Montage","Andere"];
+
 const datum=document.getElementById("datum");
 const operatorNaam=document.getElementById("operatorNaam");
 const vervoerSelect=document.getElementById("vervoerSelect");
@@ -84,14 +89,107 @@ const productieCards=document.getElementById("productieCards");
 const zoekResultaten=document.getElementById("zoekResultaten");
 const dagTotaal=document.getElementById("dagTotaal");
 
+/* =======================
+   DATUM (BELGIË)
+======================= */
 function zetVandaag(){
   const d=new Date();
-  datum.value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  datum.value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
-function key(){return "productie-"+datum.value;}
+function key(){ return "productie-"+datum.value; }
 
+/* =======================
+   RIJ HTML
+======================= */
+function editRijHTML(r={}){
+  return `<div class="productie-row ${r.status||""}" data-status="${r.status||""}">
+    <select>${types.map(t=>`<option ${r.type===t?"selected":""}>${t}</option>`).join("")}</select>
+    <input type="number" value="${r.aantal||0}">
+    <input type="number" step="0.01" class="uren-input" value="${r.uren||0}">
+    <textarea class="opmerking">${r.opmerking||""}</textarea>
+    <div class="actions">
+      <button class="done">✔</button>
+      <button class="notdone">✖</button>
+      <button class="remove">X</button>
+    </div>
+  </div>`;
+}
+
+/* =======================
+   NIEUWE KLANT
+======================= */
+function nieuweKlant(data=null){
+  const card=document.createElement("div");
+  card.className="card";
+  card.innerHTML=`
+  <div class="card-header" onclick="card.classList.toggle('collapsed')">
+    <strong class="klant-naam">${data?.klant||"—"}</strong>
+    <span class="dossier-nr">${data?.dossier||"—"}</span>
+  </div>
+  <div class="card-body">
+    <input placeholder="Klant" value="${data?.klant||""}" oninput="updateHeader(this)">
+    <input placeholder="Dossier" value="${data?.dossier||""}" oninput="updateHeader(this)">
+    ${(data?.rijen||[{}]).map(editRijHTML).join("")}
+    <button class="add">Rij toevoegen</button>
+    <strong>Totaal klant: <span class="klantTotaal">0.00</span></strong>
+    <button class="delete-klant">Klant verwijderen</button>
+  </div>`;
+  productieCards.appendChild(card);
+  bind(card);
+  updateStatus(card);
+  bereken();
+}
+
+/* =======================
+   BINDING
+======================= */
+function bind(card){
+  card.querySelectorAll("input,select,textarea").forEach(i=>{
+    i.oninput=()=>{opslaan();updateStatus(card);}
+  });
+  card.querySelectorAll(".add").forEach(b=>b.onclick=()=>addRij(b));
+  card.querySelectorAll(".remove").forEach(b=>b.onclick=()=>{b.closest(".productie-row").remove();opslaan();});
+  card.querySelectorAll(".done").forEach(b=>b.onclick=()=>mark(b,"done-row"));
+  card.querySelectorAll(".notdone").forEach(b=>b.onclick=()=>mark(b,"notdone-row"));
+  card.querySelector(".delete-klant").onclick=()=>{if(confirm("Verwijderen?")){card.remove();opslaan();}};
+}
+function addRij(btn){
+  btn.insertAdjacentHTML("beforebegin",editRijHTML());
+  bind(btn.closest(".card"));
+}
+function mark(btn,status){
+  const r=btn.closest(".productie-row");
+  r.className="productie-row "+status;
+  r.dataset.status=status;
+  opslaan();
+}
+
+/* =======================
+   STATUS & TOTALEN
+======================= */
+function updateStatus(card){
+  const rows=[...card.querySelectorAll(".productie-row")];
+  card.classList.remove("status-done","status-notdone","status-progress");
+  if(rows.length && rows.every(r=>r.dataset.status==="done-row")) card.classList.add("status-done");
+  else if(rows.some(r=>r.dataset.status==="notdone-row")) card.classList.add("status-notdone");
+  else card.classList.add("status-progress");
+}
+function bereken(){
+  let dag=0;
+  document.querySelectorAll(".card").forEach(c=>{
+    let t=0;
+    c.querySelectorAll(".uren-input").forEach(i=>t+=+i.value||0);
+    c.querySelector(".klantTotaal").textContent=t.toFixed(2);
+    dag+=t;
+  });
+  dagTotaal.textContent=dag.toFixed(2);
+}
+
+/* =======================
+   OPSLAAN / LADEN
+======================= */
 function opslaan(){
-  if(isAanHetLaden) return;   // ⛔ BELANGRIJK
+  if(isAanHetLaden) return;
   bereken();
   const data={
     operator:operatorNaam.value,
@@ -99,7 +197,6 @@ function opslaan(){
     klanten:[...document.querySelectorAll(".card")].map(c=>({
       klant:c.querySelectorAll("input")[0].value,
       dossier:c.querySelectorAll("input")[1].value,
-      collapsed:c.classList.contains("collapsed"),
       rijen:[...c.querySelectorAll(".productie-row")].map(r=>({
         type:r.querySelector("select").value,
         aantal:r.querySelector("input[type=number]").value,
@@ -113,7 +210,7 @@ function opslaan(){
 }
 
 function laadDag(){
-  isAanHetLaden = true;
+  isAanHetLaden=true;
   productieCards.innerHTML="";
   zoekResultaten.innerHTML="";
   if(!datum.value) zetVandaag();
@@ -128,11 +225,14 @@ function laadDag(){
     nieuweKlant();
   }
   bereken();
-  isAanHetLaden = false;
+  isAanHetLaden=false;
 }
 
-datum.addEventListener("change",laadDag);
-window.addEventListener("load",()=>{zetVandaag();laadDag();});
+/* =======================
+   INIT
+======================= */
+datum.onchange=laadDag;
+window.onload=()=>{zetVandaag();laadDag();};
 </script>
 </body>
 </html>

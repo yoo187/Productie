@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Productie Registratie</title>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f2f4f7}
@@ -11,284 +12,162 @@ body{font-family:Arial,sans-serif;background:#f2f4f7}
 h1{text-align:center;font-size:1.6rem;margin:12px 0 20px}
 input, select, textarea{
   padding:12px;font-size:1rem;border-radius:10px;border:1px solid #ccc;
-  margin-bottom:12px;display:block;width:100%;font-family: Arial, sans-serif;
-  transition: all 0.3s ease;
+  margin-bottom:12px;display:block;width:100%;
 }
-input:focus, select:focus, textarea:focus{
-  border-color:#3498db;box-shadow:0 0 8px rgba(52,152,219,.2);outline:none;
-}
-textarea{resize: vertical;box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);}
 .controls{display:flex;gap:10px;margin-bottom:16px;justify-content:center;flex-wrap:wrap}
-button{padding:12px;border-radius:10px;border:none;cursor:pointer;font-size:1rem;
-  transition:all .3s ease;box-shadow:0 2px 6px rgba(0,0,0,.1);}
-button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.15);}
-button:active{transform:translateY(0) scale(0.97);}
-.add{background:#2ecc71;color:#fff}.remove{background:#e74c3c;color:#fff}
-.done{background:#27ae60;color:#fff}.notdone{background:#c0392b;color:#fff}
+button{padding:12px;border-radius:10px;border:none;cursor:pointer}
+.add{background:#2ecc71;color:#fff}
+.remove{background:#e74c3c;color:#fff}
+.done{background:#27ae60;color:#fff}
+.notdone{background:#c0392b;color:#fff}
 .delete-klant{background:#555;color:#fff}
-.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,.08);overflow:hidden;border-left:8px solid #ccc;transition:all .35s ease}
-.card.status-done{border-color:#27ae60}.card.status-notdone{border-color:#c0392b}.card.status-progress{border-color:#f39c12}
-.card-header{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#f7f9fc;padding:12px 14px;border-radius:12px;cursor:pointer;transition:background .3s, box-shadow .3s}
-.card-header:hover{background:#eef5f9;box-shadow:0 4px 12px rgba(0,0,0,.08);}
-.card.collapsed .card-header{background:#eafaf1}
-.card-header .info{display:flex;flex-direction:column;gap:2px;font-weight:bold}
-.card-header .klant-naam{font-size:1.05rem}.card-header .dossier-nr{font-size:.9rem;color:#555}
-.badge{padding:4px 10px;border-radius:12px;font-size:.85rem;color:#fff;width:fit-content;transition:all .3s ease;}
-.badge.done{background:#27ae60}.badge.notdone{background:#c0392b}.badge.progress{background:#f39c12}
-.card-header .icon{font-size:1.2rem;transition:transform .3s ease;}
-.card.collapsed .icon{transform:rotate(-90deg)}
-.card-body{overflow:hidden;transition:max-height .35s ease, opacity .25s ease;max-height:3000px;opacity:1;margin-top:12px;}
-.card.collapsed .card-body{max-height:0;opacity:0;margin-top:0;}
-.grid{display:flex;flex-direction:column;gap:12px;margin-bottom:12px}label{font-weight:bold}
-.productie-row{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:12px;border:2px solid #ddd;margin-bottom:12px;transition:all .3s ease;opacity:1;transform:translateY(0);}
+.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:16px;border-left:8px solid #ccc}
+.card-header{display:flex;justify-content:space-between;cursor:pointer;font-weight:bold}
+.card.collapsed .card-body{display:none}
+.badge{padding:4px 10px;border-radius:12px;color:#fff}
+.badge.progress{background:#f39c12}
+.badge.done{background:#27ae60}
+.badge.notdone{background:#c0392b}
+.productie-row{border:2px solid #ddd;padding:10px;border-radius:10px;margin-bottom:10px}
 .productie-row.done-row{border-color:#27ae60;background:#eafaf1}
 .productie-row.notdone-row{border-color:#c0392b;background:#fde6e0}
-.productie-row.added{animation:addRowAnim .3s ease;}
-.productie-row.removed{animation:removeRowAnim .3s ease forwards;}
-@keyframes addRowAnim{0%{opacity:0;transform:translateY(-10px)}100%{opacity:1;transform:translateY(0)}}
-@keyframes removeRowAnim{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
-@media(min-width:768px){
-  .grid{flex-direction:row}
-  .productie-row{flex-direction:row;flex-wrap:wrap}
-  .productie-row>div{flex:1;min-width:140px}
-}
-@page{size:A4;margin:18mm}
-@media print{
-  body{background:#fff}
-  .controls, .card-header, .actions, button,#datum,#zoekInput,.grid{display:none!important}
-  h1{text-align:left;margin-bottom:8mm;font-size:18pt}
-  .print-info{display:block;font-size:12pt;margin-bottom:6px;font-weight:bold}
-  .card{box-shadow:none;border:1px solid #999;page-break-inside:avoid;}
-  .card-body{max-height:none!important;opacity:1!important;margin-top:6px;}
-  .productie-row{display:grid;grid-template-columns:3fr 1fr 1fr 3fr;border:none;border-bottom:1px solid #ccc;padding:4px 0;margin:0 0 2px 0;}
-  .productie-row:last-child{border-bottom:none}
-  input, textarea, select{border:none;padding:0;font-size:10pt;background:none;}
-  h3{margin-top:10mm;font-size:12pt}
-}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
 </style>
 </head>
+
 <body>
 <div class="app">
 <h1>Productie Registratie</h1>
 
-<div class="grid" style="margin-bottom:16px; gap:12px;">
-  <div style="flex:1;">
-    <label>Naam operator</label>
-    <input type="text" id="operatorNaam" placeholder="Naam operator">
-  </div>
-  <div style="flex:1;">
-    <label>Vervoer</label>
-    <select id="vervoerSelect">
-      <option value="Fiets">Fiets</option>
-      <option value="Auto">Auto</option>
-    </select>
-  </div>
-</div>
+<label>Naam operator</label>
+<input id="operatorNaam">
+
+<label>Vervoer</label>
+<select id="vervoerSelect">
+  <option value="Fiets">Fiets</option>
+  <option value="Auto">Auto</option>
+</select>
 
 <input type="date" id="datum">
-<input type="text" id="zoekInput" placeholder="Zoeken op dossiernummer..." oninput="zoekDossier(this.value)">
+<input placeholder="Zoeken dossier" oninput="zoekDossier(this.value)">
 
 <div class="controls">
-  <button onclick="allesUitklappen()">Alles uitklappen</button>
-  <button onclick="allesInklappen()">Alles inklappen</button>
-  <button onclick="voegPrintInfoToe(); window.print()">Print / PDF</button>
+<button onclick="allesUitklappen()">Alles uitklappen</button>
+<button onclick="allesInklappen()">Alles inklappen</button>
+<button onclick="window.print()">Print</button>
 </div>
 
 <div id="zoekResultaten"></div>
 <div id="productieCards"></div>
+
 <button class="add" onclick="nieuweKlant()">Nieuwe klant</button>
 <h3>Dag totaal: <span id="dagTotaal">0.00</span></h3>
 </div>
 
 <script>
-const types=["Raam kader","Raam vleugel","Deur kader","Deur vleugel","Schuifraam kader","Schuifraam vleugel","T-profiel","Glaslatten","Beslag","Opkuisen","Montage","Andere"];
-const datum=document.getElementById("datum");
-const operatorNaam=document.getElementById("operatorNaam");
-const vervoerSelect=document.getElementById("vervoerSelect");
-const productieCards=document.getElementById("productieCards");
-const zoekResultaten=document.getElementById("zoekResultaten");
-const dagTotaal=document.getElementById("dagTotaal");
+/* 🔒 BEVEILIGING TEGEN DATA VERLIES */
+let isAanHetLaden = false;
 
-// --- Belgische tijd fix ---
-function zetVandaag() {
-  const vandaag = new Date();
-  const yyyy = vandaag.getFullYear();
-  const mm = String(vandaag.getMonth() + 1).padStart(2,'0');
-  const dd = String(vandaag.getDate()).padStart(2,'0');
-  datum.value = `${yyyy}-${mm}-${dd}`;
+const datum = document.getElementById("datum");
+const productieCards = document.getElementById("productieCards");
+const zoekResultaten = document.getElementById("zoekResultaten");
+const operatorNaam = document.getElementById("operatorNaam");
+const vervoerSelect = document.getElementById("vervoerSelect");
+const dagTotaal = document.getElementById("dagTotaal");
+
+function zetVandaag(){
+  const d = new Date();
+  datum.value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
-// --- Functies ---
-function key(){ return "productie-"+datum.value; }
-
-function editRijHTML(r={}){return `<div class="productie-row added ${r.status||""}" data-status="${r.status||""}">
-<div><label>Type</label><select>${types.map(t=>`<option ${r.type===t?"selected":""}>${t}</option>`).join("")}</select></div>
-<div><label>Aantal</label><input type="number" value="${r.aantal||0}"></div>
-<div><label>Uren</label><input type="number" step="0.01" class="uren-input" value="${r.uren||0}"></div>
-<div><label>Opmerking</label><textarea class="opmerking">${r.opmerking||""}</textarea></div>
-<div class="actions">
-<button class="done">Voltooid</button>
-<button class="notdone">Niet voltooid</button>
-<button class="remove">X</button>
-</div></div>`;}
+function key(){ return "productie-"+datum.value }
 
 function nieuweKlant(data=null){
-  const card=document.createElement("div");
-  card.className="card";
-  card.innerHTML=`<div class="card-header" onclick="toggleCard(this)">
-      <div class="info">
-        <span class="klant-naam">${data?.klant||"—"}</span>
-        <span class="dossier-nr">${data?.dossier||"—"}</span>
-        <span class="badge progress">…</span>
-      </div>
-      <span class="icon">▼</span>
-    </div>
-    <div class="card-body">
-      <div class="grid">
-        <div><label>Klant</label><input value="${data?.klant||""}" oninput="updateHeader(this)"></div>
-        <div><label>Dossier</label><input value="${data?.dossier||""}" oninput="updateHeader(this)"></div>
-      </div>
-      ${(data?.rijen||[{}]).map(editRijHTML).join("")}
-      <button class="add">Rij toevoegen</button>
-      <strong>Totaal klant: <span class="klantTotaal">0.00</span></strong>
-      <button class="delete-klant">Klant verwijderen</button>
-    </div>`;
-  if(data?.collapsed) card.classList.add("collapsed");
-  productieCards.appendChild(card);
-  bind(card);
-  updateStatus(card);
-  bereken();
+  const c=document.createElement("div");
+  c.className="card";
+  c.innerHTML=`
+  <div class="card-header" onclick="c.classList.toggle('collapsed')">
+    <div>${data?.klant||"—"} | ${data?.dossier||"—"}</div>
+    <span class="badge progress">…</span>
+  </div>
+  <div class="card-body">
+    <input placeholder="Klant" value="${data?.klant||""}" oninput="opslaan()">
+    <input placeholder="Dossier" value="${data?.dossier||""}" oninput="opslaan()">
+    ${(data?.rijen||[{}]).map(rijHTML).join("")}
+    <button class="add" onclick="addRij(this)">Rij toevoegen</button>
+    <button class="delete-klant" onclick="this.closest('.card').remove();opslaan()">Verwijder klant</button>
+  </div>`;
+  productieCards.appendChild(c);
 }
 
-// Toggle, bind, status, berekening, opslaan, zoek etc.
-function toggleCard(h){h.closest(".card").classList.toggle("collapsed");opslaan();}
-function allesInklappen(){document.querySelectorAll(".card").forEach(c=>c.classList.add("collapsed"));}
-function allesUitklappen(){document.querySelectorAll(".card").forEach(c=>c.classList.remove("collapsed"));}
-function updateHeader(i){
-  const c=i.closest(".card");
-  c.querySelector(".klant-naam").textContent=c.querySelectorAll("input")[0].value||"—";
-  c.querySelector(".dossier-nr").textContent=c.querySelectorAll("input")[1].value||"—";
-  opslaan();
-}
-function addRij(b){
-  const rijHtml=editRijHTML();
-  b.insertAdjacentHTML("beforebegin",rijHtml);
-  const rij = b.previousElementSibling;
-  rij.classList.remove("added"); void rij.offsetWidth; rij.classList.add("added");
-  bind(b.closest(".card"));
-}
-function bind(c){
-  c.querySelectorAll("input,select,textarea").forEach(i=>{i.addEventListener("input",()=>{opslaan();updateStatus(c)})});
-  c.querySelectorAll(".productie-row .done").forEach(btn=>{btn.onclick = ()=>markDone(btn);});
-  c.querySelectorAll(".productie-row .notdone").forEach(btn=>{btn.onclick = ()=>markNotDone(btn);});
-  c.querySelectorAll(".productie-row .remove").forEach(btn=>{btn.onclick = ()=>verwijderRij(btn);});
-  c.querySelectorAll(".delete-klant").forEach(btn=>{btn.onclick = ()=>verwijderKlant(btn);});
-  c.querySelectorAll(".add").forEach(btn=>{btn.onclick = ()=>addRij(btn);});
-}
-function verwijderRij(b){const r=b.closest(".productie-row");r.classList.add("removed");r.addEventListener("animationend",()=>{r.remove();opslaan()});}
-function verwijderKlant(b){if(confirm("Klant verwijderen?")){b.closest(".card").remove();opslaan()}}
-function markDone(b){const r=b.closest(".productie-row");r.className="productie-row done-row";r.dataset.status="done-row";updateStatus(b.closest(".card"));opslaan()}
-function markNotDone(b){const r=b.closest(".productie-row");r.className="productie-row notdone-row";r.dataset.status="notdone-row";updateStatus(b.closest(".card"));opslaan()}
-function updateStatus(card){
-  const rows=[...card.querySelectorAll(".productie-row")];
-  const badge=card.querySelector(".badge");
-  card.classList.remove("status-done","status-notdone","status-progress");
-  if(rows.length && rows.every(r=>r.dataset.status==="done-row")){
-    badge.textContent="✔"; badge.className="badge done"; card.classList.add("status-done");
-  }else if(rows.some(r=>r.dataset.status==="notdone-row")){
-    badge.textContent="✖"; badge.className="badge notdone"; card.classList.add("status-notdone");
-  }else{
-    badge.textContent="…"; badge.className="badge progress"; card.classList.add("status-progress");
-  }
-}
+function rijHTML(r={}){return `
+<div class="productie-row ${r.status||""}">
+<input placeholder="Type" value="${r.type||""}">
+<input type="number" placeholder="Uren" value="${r.uren||0}" class="uren-input">
+<div class="actions">
+<button class="done" onclick="mark(this,'done-row')">✔</button>
+<button class="notdone" onclick="mark(this,'notdone-row')">✖</button>
+<button class="remove" onclick="this.closest('.productie-row').remove();opslaan()">X</button>
+</div></div>`}
+
+function addRij(b){b.insertAdjacentHTML("beforebegin",rijHTML());opslaan()}
+function mark(b,s){b.closest(".productie-row").className="productie-row "+s;opslaan()}
+
 function bereken(){
-  let dag=0;
-  document.querySelectorAll(".card").forEach(c=>{
-    let t=0;
-    c.querySelectorAll(".uren-input").forEach(i=>t+=+i.value||0);
-    c.querySelector(".klantTotaal").textContent=t.toFixed(2);
-    dag+=t;
-  });
-  dagTotaal.textContent=dag.toFixed(2);
+  let t=0;
+  document.querySelectorAll(".uren-input").forEach(i=>t+=+i.value||0);
+  dagTotaal.textContent=t.toFixed(2);
 }
+
 function opslaan(){
+  if(isAanHetLaden) return;   // ⛔ BELANGRIJK
+
   bereken();
-  const data={operator:operatorNaam.value,vervoer:vervoerSelect.value,klanten:[...document.querySelectorAll(".card")].map(c=>({
-    klant:c.querySelectorAll("input")[0].value,
-    dossier:c.querySelectorAll("input")[1].value,
-    collapsed:c.classList.contains("collapsed"),
-    rijen:[...c.querySelectorAll(".productie-row")].map(r=>({
-      type:r.querySelector("select").value,
-      aantal:r.querySelector("input[type=number]").value,
-      uren:r.querySelector(".uren-input").value,
-      opmerking:r.querySelector(".opmerking").value,
-      status:r.dataset.status
+  const data={
+    operator:operatorNaam.value,
+    vervoer:vervoerSelect.value,
+    klanten:[...document.querySelectorAll(".card")].map(c=>({
+      klant:c.querySelectorAll("input")[0].value,
+      dossier:c.querySelectorAll("input")[1].value,
+      rijen:[...c.querySelectorAll(".productie-row")].map(r=>({
+        type:r.querySelector("input").value,
+        uren:r.querySelector(".uren-input").value,
+        status:r.classList.contains("done-row")?"done-row":
+               r.classList.contains("notdone-row")?"notdone-row":""
+      }))
     }))
-  }))};
+  };
   localStorage.setItem(key(),JSON.stringify(data));
 }
+
 function laadDag(){
-  productieCards.innerHTML=""; zoekResultaten.innerHTML="";
-  if(!datum.value) zetVandaag();
-  let data = JSON.parse(localStorage.getItem(key())||"null");
-  if(!data){operatorNaam.value=""; vervoerSelect.value="Fiets"; nieuweKlant(); bereken(); return;}
-  operatorNaam.value = data.operator || "";
-  vervoerSelect.value = data.vervoer || "Fiets";
-  data.klanten.forEach(nieuweKlant);
+  isAanHetLaden = true;
+
+  productieCards.innerHTML="";
+  zoekResultaten.innerHTML="";
+  const d = JSON.parse(localStorage.getItem(key())||"null");
+
+  if(!d){
+    operatorNaam.value="";
+    vervoerSelect.value="Fiets";
+    nieuweKlant();
+  } else {
+    operatorNaam.value=d.operator||"";
+    vervoerSelect.value=d.vervoer||"Fiets";
+    d.klanten.forEach(nieuweKlant);
+  }
+
   bereken();
+  isAanHetLaden = false;
 }
-datum.addEventListener("change", laadDag);
-window.addEventListener("load", ()=>{
+
+datum.addEventListener("change",laadDag);
+
+window.addEventListener("load",()=>{
   zetVandaag();
   laadDag();
 });
-
-function zoekDossier(val){
-  const zoekLower = val.toLowerCase();
-  zoekResultaten.innerHTML = "";
-  productieCards.innerHTML = "";
-  if(!val){laadDag(); return;}
-  const keys = Object.keys(localStorage).filter(k=>k.startsWith("productie-") && /^\d{4}-\d{2}-\d{2}$/.test(k.replace("productie-",""))).sort().reverse();
-  keys.forEach(k=>{
-    const dagData = JSON.parse(localStorage.getItem(k));
-    if(!dagData || !dagData.klanten) return;
-    const matches = dagData.klanten.filter(c => (c.dossier||"").toLowerCase().includes(zoekLower));
-    if(matches.length){
-      const dtParts = k.replace("productie-","").split("-");
-      const ddmmjjjj = dtParts[2]+"-"+dtParts[1]+"-"+dtParts[0];
-      zoekResultaten.innerHTML += `<h3>📅 ${ddmmjjjj}</h3>`;
-      matches.forEach(m => {
-        const card=document.createElement("div");
-        card.className="card readonly";
-        card.innerHTML=`<div class="card-body">
-          <div class="grid">
-            <div><label>Klant</label><input value="${m.klant}" readonly></div>
-            <div><label>Dossier</label><input value="${m.dossier}" readonly></div>
-          </div>
-          ${m.rijen.map(r=>`<div class="productie-row ${r.status}">
-            <div><label>Type</label> ${r.type}</div>
-            <div><label>Aantal</label> ${r.aantal}</div>
-            <div><label>Uren</label> ${r.uren}</div>
-            <div><label>Opmerking</label> ${r.opmerking}</div>
-          </div>`).join("")}
-        </div>`;
-        zoekResultaten.appendChild(card);
-      });
-    }
-  });
-}
-
-function voegPrintInfoToe(){
-  let printInfo=document.querySelector(".print-info");
-  if(!printInfo){
-    printInfo=document.createElement("div");
-    printInfo.className="print-info";
-    printInfo.textContent=`Operator: ${operatorNaam.value || "—"} | Vervoer: ${vervoerSelect.value || "—"}`;
-    document.body.insertBefore(printInfo, document.body.firstChild.nextSibling);
-  }
-}
 </script>
+
 </body>
 </html>
-

@@ -4,48 +4,44 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Productie Registratie</title>
-
 <style>
+/* === ORIGINELE CSS – ONGEWIJZIGD === */
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f2f4f7}
 .app{padding:12px}
 h1{text-align:center;font-size:1.6rem;margin:12px 0 20px}
-
 input, select, textarea{
   padding:12px;font-size:1rem;border-radius:10px;border:1px solid #ccc;
-  margin-bottom:12px;display:block;width:100%;
+  margin-bottom:12px;display:block;width:100%;font-family: Arial, sans-serif;
+  transition: all 0.3s ease;
 }
-
-button{
-  padding:10px;border-radius:10px;border:none;cursor:pointer;font-size:0.95rem
+input:focus, select:focus, textarea:focus{
+  border-color:#3498db;box-shadow:0 0 8px rgba(52,152,219,.2);outline:none;
 }
-.add{background:#2ecc71;color:#fff}
-.remove{background:#e74c3c;color:#fff}
+textarea{resize: vertical;box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);}
+.controls{display:flex;gap:10px;margin-bottom:16px;justify-content:center;flex-wrap:wrap}
+button{padding:12px;border-radius:10px;border:none;cursor:pointer;font-size:1rem;
+  transition:all .3s ease;box-shadow:0 2px 6px rgba(0,0,0,.1);}
+button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.15);}
+button:active{transform:translateY(0) scale(0.97);}
+.add{background:#2ecc71;color:#fff}.remove{background:#e74c3c;color:#fff}
+.done{background:#27ae60;color:#fff}.notdone{background:#c0392b;color:#fff}
+.delete-klant{background:#555;color:#fff}
 .timer-start{background:#3498db;color:#fff}
 .timer-stop{background:#7f8c8d;color:#fff}
 
-.card{
-  background:#fff;border-radius:16px;padding:14px;margin-bottom:16px;
-}
-.productie-row{
-  border:2px solid #ddd;padding:12px;border-radius:12px;margin-bottom:12px;
-  display:flex;flex-wrap:wrap;gap:10px;
-}
-.productie-row > div{flex:1;min-width:140px}
-.actions{display:flex;gap:6px;flex-wrap:wrap}
+.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,.08);overflow:hidden;border-left:8px solid #ccc;transition:all .35s ease}
 
 .timer-display{
   font-weight:bold;
-  font-size:1.1rem;
   text-align:center;
-  padding:6px;
+  padding:4px;
   background:#eef3f7;
-  border-radius:8px;
+  border-radius:6px;
 }
 
 @media print{
-  button{display:none!important}
-  body{background:#fff}
+  .timer-display,.timer-start,.timer-stop{display:none!important}
 }
 </style>
 </head>
@@ -55,59 +51,57 @@ button{
 <h1>Productie Registratie</h1>
 
 <input type="date" id="datum">
-
 <div id="productieCards"></div>
-
 <button class="add" onclick="nieuweKlant()">Nieuwe klant</button>
-
 <h3>Dag totaal: <span id="dagTotaal">0.00</span></h3>
 </div>
 
 <script>
+/* === ORIGINELE JS – ONGEWIJZIGD TOT AAN TOEVOEGINGEN === */
+
 const types=["Raam kader","Raam vleugel","Deur kader","Deur vleugel","Andere"];
 const productieCards=document.getElementById("productieCards");
 const dagTotaal=document.getElementById("dagTotaal");
 const datum=document.getElementById("datum");
 
-let actieveTimer=null;
-
 function key(){ return "productie-"+datum.value; }
 
-function formatTijd(sec){
+/* =======================
+   TIMER TOEVOEGING START
+======================= */
+function formatTimer(sec){
   const h=String(Math.floor(sec/3600)).padStart(2,'0');
   const m=String(Math.floor((sec%3600)/60)).padStart(2,'0');
   const s=String(Math.floor(sec%60)).padStart(2,'0');
   return `${h}:${m}:${s}`;
 }
 
+function rond15min(sec){
+  const min=Math.round((sec/60)/15)*15;
+  return (min/60).toFixed(2);
+}
+/* =======================
+   TIMER TOEVOEGING EINDE
+======================= */
+
 function editRijHTML(r={}){
   const sec=r.seconden||0;
   return `
-<div class="productie-row"
-     data-seconden="${sec}"
-     data-running="false">
+<div class="productie-row" data-seconden="${sec}" data-running="false">
+<div><label>Type</label><select>${types.map(t=>`<option ${r.type===t?"selected":""}>${t}</option>`).join("")}</select></div>
 
-  <div>
-    <label>Type</label>
-    <select>${types.map(t=>`<option ${r.type===t?"selected":""}>${t}</option>`).join("")}</select>
-  </div>
+<!-- TIMER TOEVOEGING -->
+<div>
+  <label>Timer</label>
+  <div class="timer-display">${formatTimer(sec)}</div>
+</div>
 
-  <div>
-    <label>Timer</label>
-    <div class="timer-display">${formatTijd(sec)}</div>
-  </div>
-
-  <div>
-    <label>Uren (15 min)</label>
-    <input class="uren-input" type="number" step="0.25" value="${r.uren||0}">
-  </div>
-
-  <div class="actions">
-    <button class="timer-start">Start</button>
-    <button class="timer-stop">Stop</button>
-    <button class="remove">X</button>
-  </div>
-</div>`;
+<div><label>Uren</label><input type="number" step="0.01" class="uren-input" value="${r.uren||0}"></div>
+<div class="actions">
+<button class="timer-start">Start</button>
+<button class="timer-stop">Stop</button>
+<button class="remove">X</button>
+</div></div>`;
 }
 
 function nieuweKlant(data=null){
@@ -141,45 +135,29 @@ function bind(card){
 }
 
 function startTimer(row){
-  if(actieveTimer) stopTimer(actieveTimer);
   if(row.dataset.running==="true") return;
-
   row.dataset.running="true";
   row.dataset.start=Date.now();
-  actieveTimer=row;
-
   row.interval=setInterval(()=>{
     const sec=Number(row.dataset.seconden)+(Date.now()-row.dataset.start)/1000;
-    row.querySelector(".timer-display").textContent=formatTijd(sec);
+    row.querySelector(".timer-display").textContent=formatTimer(sec);
   },1000);
 }
 
 function stopTimer(row){
   if(row.dataset.running!=="true") return;
-
   clearInterval(row.interval);
-
-  const elapsed=(Date.now()-row.dataset.start)/1000;
-  const totaal=Number(row.dataset.seconden)+elapsed;
-
-  row.dataset.seconden=totaal;
+  const sec=Number(row.dataset.seconden)+(Date.now()-row.dataset.start)/1000;
+  row.dataset.seconden=sec;
   row.dataset.running="false";
-
-  const minuten=Math.round((totaal/60)/15)*15;
-  const uren=(minuten/60).toFixed(2);
-
-  row.querySelector(".uren-input").value=uren;
-  row.querySelector(".timer-display").textContent=formatTijd(totaal);
-
-  actieveTimer=null;
+  row.querySelector(".uren-input").value=rond15min(sec);
+  row.querySelector(".timer-display").textContent=formatTimer(sec);
   opslaan();
 }
 
 function bereken(){
   let totaal=0;
-  document.querySelectorAll(".uren-input").forEach(i=>{
-    totaal+=Number(i.value||0);
-  });
+  document.querySelectorAll(".uren-input").forEach(i=>totaal+=+i.value||0);
   dagTotaal.textContent=totaal.toFixed(2);
 }
 

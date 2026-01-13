@@ -6,229 +6,342 @@
 <title>Productie Registratie</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f2f4f7}
-.app{padding:12px}
-h1{text-align:center;font-size:1.6rem;margin:12px 0 20px}
+body{font-family:Arial,sans-serif;background:#f2f4f7;color:#333}
+.app{padding:12px;max-width:1200px;margin:0 auto}
+h1{text-align:center;font-size:1.6rem;margin:12px 0 20px;color:#2c3e50}
 input, select, textarea{padding:12px;font-size:1rem;border-radius:10px;border:1px solid #ccc;margin-bottom:12px;display:block;width:100%;transition: all 0.3s ease;}
 input:focus, select:focus, textarea:focus{border-color:#3498db;box-shadow:0 0 8px rgba(52,152,219,.2);outline:none;}
 textarea{resize: vertical;box-shadow: inset 0 2px 4px rgba(0,0,0,.05);}
 .controls{display:flex;gap:10px;margin-bottom:16px;justify-content:center;flex-wrap:wrap}
-button{padding:12px;border-radius:10px;border:none;cursor:pointer;font-size:1rem;transition:all .3s ease;box-shadow:0 2px 6px rgba(0,0,0,.1);}
+button{padding:12px 18px;border-radius:10px;border:none;cursor:pointer;font-size:1rem;transition:all .3s ease;box-shadow:0 2px 6px rgba(0,0,0,.1);font-weight:bold}
 button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.15);}
 button:active{transform:translateY(0) scale(0.97);}
 .add{background:#2ecc71;color:#fff}.remove{background:#e74c3c;color:#fff}
 .done{background:#27ae60;color:#fff}.notdone{background:#c0392b;color:#fff}
-.delete-klant{background:#555;color:#fff}
+.delete-klant{background:#555;color:#fff;margin-top:10px;width:100%}
 .timer-start{background:#f39c12;color:#fff}   
 .timer-stop{background:#7f8c8d;color:#fff}    
-.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,.08);overflow:hidden;border-left:8px solid #ccc;transition:all .35s ease}
-.card-header{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#f7f9fc;padding:12px 14px;border-radius:12px;cursor:pointer;transition:background .3s, box-shadow .3s}
-.card-header:hover{background:#eef5f9;box-shadow:0 4px 12px rgba(0,0,0,.08);}
-.card.collapsed .card-header{background:#eafaf1}
+.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,.08);overflow:hidden;border-left:8px solid #3498db;transition:all .35s ease}
+.card-header{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#f7f9fc;padding:12px 14px;border-radius:12px;cursor:pointer;margin-bottom:10px}
+.card.collapsed .card-body{display:none}
 .card-header .info{display:flex;flex-direction:column;gap:2px;font-weight:bold}
 .card-header .klant-naam{font-size:1.05rem}.card-header .dossier-nr{font-size:.9rem;color:#555}
-.badge{padding:4px 10px;border-radius:12px;font-size:.85rem;color:#fff;width:fit-content;transition:all .3s ease;}
+.badge{padding:4px 10px;border-radius:12px;font-size:.85rem;color:#fff;width:fit-content}
 .badge.done{background:#27ae60}.badge.notdone{background:#c0392b}.badge.progress{background:#f39c12}
-.card-header .icon{font-size:1.2rem;transition:transform .3s ease;}
-.card.collapsed .icon{transform:rotate(-90deg)}
-.card-body{overflow:hidden;transition:max-height .35s ease, opacity .25s ease;max-height:3000px;opacity:1;margin-top:12px;}
-.card.collapsed .card-body{max-height:0;opacity:0;margin-top:0;}
-.grid{display:flex;flex-direction:column;gap:12px;margin-bottom:12px}label{font-weight:bold}
-.productie-row{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:12px;border:2px solid #ddd;margin-bottom:12px;transition:all .3s ease;opacity:1;transform:translateY(0);}
+.card.status-running{border-left-color:#f39c12;animation: pulse 2s infinite;}
+@keyframes pulse { 0% {box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4);} 70% {box-shadow: 0 0 0 10px rgba(243, 156, 18, 0);} 100% {box-shadow: 0 0 0 0 rgba(243, 156, 18, 0);} }
+.grid{display:flex;flex-direction:column;gap:12px;margin-bottom:12px}label{font-weight:bold;font-size:0.85rem;display:block;margin-bottom:4px}
+.productie-row{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:12px;border:2px solid #ddd;margin-bottom:12px;position:relative;}
 .productie-row.done-row{border-color:#27ae60;background:#eafaf1}
 .productie-row.notdone-row{border-color:#c0392b;background:#fde6e0}
-.productie-row.running-row{border-color:#f39c12}
-.productie-row.added{animation:addRowAnim .3s ease;}
-.productie-row.removed{animation:removeRowAnim .3s ease forwards;}
-@keyframes addRowAnim{0%{opacity:0;transform:translateY(-10px)}100%{opacity:1;transform:translateY(0)}}
-@keyframes removeRowAnim{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}
+.productie-row.running-row{border-color:#f39c12;background:#fef5e7}
+.timer-display{font-weight:bold;text-align:center;padding:8px;background:#333;color:#fff;border-radius:6px;font-family:monospace;font-size:1.2rem} 
 .actions{display:flex;gap:8px;flex-wrap:wrap}
-.timer-display{font-weight:bold;text-align:center;padding:4px;background:#eef3f7;border-radius:6px} 
+.actions button{padding:8px;flex:1;font-size:0.8rem}
+.dag-totaal-container{background:#2c3e50;color:#fff;padding:15px;border-radius:12px;text-align:center;margin:20px 0}
+
 @media(min-width:768px){
   .grid{flex-direction:row}
-  .productie-row{flex-direction:row;flex-wrap:wrap}
-  .productie-row>div{flex:1;min-width:140px}
+  .productie-row{flex-direction:row;align-items:flex-end}
+  .productie-row>div{flex:1}
+  .actions{flex:1.5}
 }
-@page{size:A4;margin:18mm}
+
 @media print{
-  .timer-display,.timer-start,.timer-stop,.actions,.card-header,.controls,#datum,#zoekInput,.grid{display:none!important}
-  h1{text-align:left;margin-bottom:8mm;font-size:18pt}
-  .print-info{display:block;font-size:12pt;margin-bottom:6px;font-weight:bold}
-  .card{box-shadow:none;border:1px solid #999;page-break-inside:avoid;}
-  .card-body{max-height:none!important;opacity:1!important;margin-top:6px;}
-  .productie-row{display:grid;grid-template-columns:3fr 1fr 1fr 3fr;border:none;border-bottom:1px solid #ccc;padding:4px 0;margin:0 0 2px 0;}
-  .productie-row:last-child{border-bottom:none}
-  input, textarea, select{border:none;padding:0;font-size:10pt;background:none;}
+  .timer-start,.timer-stop,.actions,.controls,#zoekInput,.add,.delete-klant,.grid label:nth-child(2){display:none!important}
+  .card{border:1px solid #000;break-inside:avoid;box-shadow:none;margin-bottom:20px}
+  .card.collapsed .card-body{display:block!important}
+  input, textarea{border:none!important;padding:2px!important}
+  .productie-row{border:none;border-bottom:1px solid #ccc;padding:5px 0}
 }
 </style>
 </head>
 <body>
 <div class="app">
-<h1>Productie Registratie</h1>
-<div class="grid" style="margin-bottom:16px; gap:12px;">
-  <div style="flex:1;"><label>Naam operator</label><input type="text" id="operatorNaam" placeholder="Naam operator"></div>
-  <div style="flex:1;"><label>Vervoer</label><select id="vervoerSelect"><option value="Fiets">Fiets</option><option value="Auto">Auto</option></select></div>
-</div>
-<input type="date" id="datum">
-<input type="text" id="zoekInput" placeholder="Zoeken op dossiernummer..." oninput="zoekDossier(this.value)">
-<div class="controls">
-  <button onclick="allesUitklappen()">Alles uitklappen</button>
-  <button onclick="allesInklappen()">Alles inklappen</button>
-  <button onclick="voegPrintInfoToe(); window.print()">Print / PDF</button>
-</div>
-<div id="zoekResultaten"></div>
-<div id="productieCards"></div>
-<button class="add" onclick="nieuweKlant()">Nieuwe klant</button>
-<h3>Dag totaal: <span id="dagTotaal">0.00</span></h3>
-<script>
-// === JS ===
-const types=["Raam kader","Raam vleugel","Deur kader","Deur vleugel","Schuifraam kader","Schuifraam vleugel","T-profiel","Glaslatten","Beslag","Opkuisen","Montage","Andere"];
-const datum=document.getElementById("datum"), operatorNaam=document.getElementById("operatorNaam"), vervoerSelect=document.getElementById("vervoerSelect"), productieCards=document.getElementById("productieCards"), zoekResultaten=document.getElementById("zoekResultaten"), dagTotaal=document.getElementById("dagTotaal");
-let isAanHetLaden=false, actieveTimer=null;
+    <h1>Productie Registratie</h1>
+    
+    <div class="grid">
+      <div style="flex:1;"><label>Naam operator</label><input type="text" id="operatorNaam" placeholder="Naam operator"></div>
+      <div style="flex:1;"><label>Vervoer</label><select id="vervoerSelect"><option value="Fiets">Fiets</option><option value="Auto">Auto</option></select></div>
+    </div>
+    
+    <input type="date" id="datum">
+    <input type="text" id="zoekInput" placeholder="Zoeken op dossiernummer in verleden..." oninput="zoekDossier(this.value)">
 
-function zetVandaag(){const nu=new Date(); const offset = nu.getTimezoneOffset()*60000; const belgie = new Date(nu.getTime()-offset+3600000); datum.value=belgie.toISOString().slice(0,10);}
-function key(){return "productie-"+datum.value;}
-function formatTimer(sec){const h=Math.floor(sec/3600); const m=Math.floor((sec%3600)/60); const s=sec%60; return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}
+    <div class="controls">
+      <button onclick="allesUitklappen()">Alles uitklappen</button>
+      <button onclick="allesInklappen()">Alles inklappen</button>
+      <button class="add" onclick="nieuweKlant()">+ Nieuwe klant</button>
+      <button style="background:#34495e;color:white" onclick="window.print()">Print naar PDF</button>
+    </div>
+
+    <div id="zoekResultaten"></div>
+    <div id="productieCards"></div>
+
+    <div class="dag-totaal-container">
+        <h3>Dag totaal: <span id="dagTotaal">0.00</span> uren</h3>
+    </div>
+</div>
+
+<script>
+const types=["Raam kader","Raam vleugel","Deur kader","Deur vleugel","Schuifraam kader","Schuifraam vleugel","T-profiel","Glaslatten","Beslag","Opkuisen","Montage","Andere"];
+const datumInput=document.getElementById("datum"), operatorNaam=document.getElementById("operatorNaam"), vervoerSelect=document.getElementById("vervoerSelect"), productieCards=document.getElementById("productieCards"), zoekResultaten=document.getElementById("zoekResultaten"), dagTotaal=document.getElementById("dagTotaal");
+
+let isAanHetLaden=false;
+let actieveTimerRij=null;
+let globalTimerInterval=null;
+
+function zetVandaag(){
+    const nu = new Date();
+    datumInput.value = nu.toISOString().split('T')[0];
+}
+
+function key(){return "productie-"+datumInput.value;}
+function formatTimer(sec){
+    const h=Math.floor(sec/3600); 
+    const m=Math.floor((sec%3600)/60); 
+    const s=sec%60; 
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
 function rond15(sec){return (Math.round((sec/60)/15)*0.25).toFixed(2);}
 
-function editRijHTML(r={}){return `<div class="productie-row added ${r.status||""}" data-status="${r.status||""}" data-seconden="${r.seconden||0}" data-running="false">
-<div><label>Type</label><select>${types.map(t=>`<option ${r.type===t?"selected":""}>${t}</option>`).join("")}</select></div>
-<div><label>Timer</label><div class="timer-display">${formatTimer(r.seconden||0)}</div></div>
-<div><label>Uren</label><input type="number" step="0.01" class="uren-input" value="${r.uren||0}"></div>
-<div><label>Opmerking</label><textarea class="opmerking">${r.opmerking||""}</textarea></div>
-<div class="actions">
-<button class="timer-start">Start</button>
-<button class="timer-stop">Stop</button>
-<button class="done">Voltooid</button>
-<button class="notdone">Niet voltooid</button>
-<button class="remove">X</button>
-</div></div>`;
-
-// === KLANT ===
-function nieuweKlant(data=null){
-const card=document.createElement("div"); card.className="card";
-card.innerHTML=`<div class="card-header" onclick="toggleCard(this)">
-<div class="info"><span class="klant-naam">${data?.klant||"—"}</span><span class="dossier-nr">${data?.dossier||"—"}</span><span class="badge progress">…</span></div>
-<span class="icon">▼</span></div>
-<div class="card-body">
-<div class="grid"><div><label>Klant</label><input value="${data?.klant||""}" oninput="updateHeader(this)"></div>
-<div><label>Dossier</label><input value="${data?.dossier||""}" oninput="updateHeader(this)"></div></div>
-${(data?.rijen||[{}]).map(editRijHTML).join("")}
-<button class="add">Rij toevoegen</button>
-<strong>Totaal klant: <span class="klantTotaal">0.00</span></strong>
-<button class="delete-klant">Klant verwijderen</button>
-</div>`;
-if(data?.collapsed) card.classList.add("collapsed"); productieCards.appendChild(card); bind(card); updateStatus(card); bereken();
-}
-
-// === BIND EVENTS ===
-function bind(c){
-c.querySelectorAll("input,select,textarea").forEach(i=>i.addEventListener("input",()=>{opslaan();updateStatus(c);bereken();}));
-c.querySelectorAll(".productie-row .done").forEach(btn=>btn.onclick=()=>markDone(btn));
-c.querySelectorAll(".productie-row .notdone").forEach(btn=>btn.onclick=()=>markNotDone(btn));
-c.querySelectorAll(".productie-row .remove").forEach(btn=>btn.onclick=()=>verwijderRij(btn));
-c.querySelectorAll(".delete-klant").forEach(btn=>btn.onclick=()=>verwijderKlant(btn));
-c.querySelectorAll(".add").forEach(btn=>btn.onclick=()=>addRij(btn));
-c.querySelectorAll(".productie-row .timer-start").forEach(btn=>btn.onclick=()=>startTimer(btn));
-c.querySelectorAll(".productie-row .timer-stop").forEach(btn=>btn.onclick=()=>stopTimer(btn));
-}
-
-// === TIMER ===
-function startTimer(btn){
-if(actieveTimer) stopTimer(actieveTimer.querySelector(".timer-stop"));
-const rij=btn.closest(".productie-row"); rij.dataset.running="true"; rij.classList.add("running-row"); actieveTimer=rij;
-rij.timerInterval=setInterval(()=>{rij.dataset.seconden=parseInt(rij.dataset.seconden)+1; rij.querySelector(".timer-display").textContent=formatTimer(parseInt(rij.dataset.seconden));},1000);
-updateStatus(rij.closest(".card"));
-}
-function stopTimer(btn){
-const rij=btn.closest(".productie-row");
-if(rij.timerInterval){clearInterval(rij.timerInterval); rij.timerInterval=null;}
-rij.dataset.running="false"; rij.classList.remove("running-row");
-rij.querySelector(".uren-input").value=rond15(parseInt(rij.dataset.seconden));
-updateStatus(rij.closest(".card")); bereken(); opslaan(); actieveTimer=null;
-}
-
-// === STATUS ===
-function markDone(b){const r=b.closest(".productie-row"); r.className="productie-row done-row"; r.dataset.status="done-row";updateStatus(b.closest(".card")); opslaan(); bereken();}
-function markNotDone(b){const r=b.closest(".productie-row"); r.className="productie-row notdone-row"; r.dataset.status="notdone-row";updateStatus(b.closest(".card")); opslaan(); bereken();}
-function updateStatus(card){
-const rows=[...card.querySelectorAll(".productie-row")]; const badge=card.querySelector(".badge");
-card.classList.remove("status-done","status-notdone","status-progress","status-running");
-if(rows.some(r=>r.dataset.running==="true")){badge.textContent="…";badge.className="badge progress"; card.classList.add("status-running");}
-else if(rows.length && rows.every(r=>r.dataset.status==="done-row")){badge.textContent="✔";badge.className="badge done"; card.classList.add("status-done");}
-else if(rows.some(r=>r.dataset.status==="notdone-row")){badge.textContent="✖";badge.className="badge notdone"; card.classList.add("status-notdone");}
-else{badge.textContent="…";badge.className="badge progress"; card.classList.add("status-progress");}
-}
-
-// === CRUD ===
-function addRij(b){const rijHtml=editRijHTML();b.insertAdjacentHTML("beforebegin",rijHtml); bind(b.closest(".card")); bereken(); opslaan();}
-function verwijderRij(b){const r=b.closest(".productie-row"); r.classList.add("removed"); r.addEventListener("animationend",()=>{r.remove();bereken(); opslaan();})}
-function verwijderKlant(b){if(confirm("Klant verwijderen?")){b.closest(".card").remove(); bereken(); opslaan();}}
-function updateHeader(i){const c=i.closest(".card"); c.querySelector(".klant-naam").textContent=c.querySelectorAll("input")[0].value||"—"; c.querySelector(".dossier-nr").textContent=c.querySelectorAll("input")[1].value||"—"; opslaan();}
-function toggleCard(h){h.closest(".card").classList.toggle("collapsed"); opslaan();}
-function allesUitklappen(){document.querySelectorAll(".card").forEach(c=>c.classList.remove("collapsed"));}
-function allesInklappen(){document.querySelectorAll(".card").forEach(c=>c.classList.add("collapsed"));}
-
-// === BEREKEN ===
-function bereken(){let dag=0;document.querySelectorAll(".card").forEach(c=>{let t=0; c.querySelectorAll(".uren-input").forEach(i=>t+=+i.value||0); c.querySelector(".klantTotaal").textContent=t.toFixed(2); dag+=t;}); dagTotaal.textContent=dag.toFixed(2);}
-
-// === OPSLAAN / LAAD ===
-function opslaan(){if(isAanHetLaden)return; bereken();
-const data={operator:operatorNaam.value,vervoer:vervoerSelect.value,klanten:[...document.querySelectorAll(".card")].map(c=>({klant:c.querySelectorAll("input")[0].value,dossier:c.querySelectorAll("input")[1].value,collapsed:c.classList.contains("collapsed"),rijen:[...c.querySelectorAll(".productie-row")].map(r=>({type:r.querySelector("select").value,aantal:r.querySelector("input[type=number]").value,uren:r.querySelector(".uren-input").value,opmerking:r.querySelector(".opmerking").value,status:r.dataset.status,seconden:r.dataset.seconden}))}))};
-localStorage.setItem(key(),JSON.stringify(data));
-}
-function laadDag(){isAanHetLaden=true; productieCards.innerHTML=""; zoekResultaten.innerHTML=""; if(!datum.value) zetVandaag();
-let data=JSON.parse(localStorage.getItem(key())||"null");
-if(!data){operatorNaam.value=""; vervoerSelect.value="Fiets"; nieuweKlant(); bereken(); isAanHetLaden=false; return;}
-operatorNaam.value=data.operator||""; vervoerSelect.value=data.vervoer||"Fiets"; data.klanten.forEach(nieuweKlant); bereken(); isAanHetLaden=false;}
-datum.addEventListener("change", laadDag); operatorNaam.addEventListener("input", opslaan); vervoerSelect.addEventListener("change", opslaan);
-
-// === ZOEKEN ===
-function zoekDossier(val){
-const zoekLower=val.toLowerCase(); zoekResultaten.innerHTML=""; productieCards.innerHTML="";
-if(!val){laadDag();return;}
-const keys=Object.keys(localStorage).filter(k=>k.startsWith("productie-")&&/^\d{4}-\d{2}-\d{2}$/.test(k.replace("productie-",""))).sort().reverse();
-keys.forEach(k=>{const dagData=JSON.parse(localStorage.getItem(k)); if(!dagData||!dagData.klanten) return;
-const matches=dagData.klanten.filter(c=>(c.dossier||"").toLowerCase().includes(zoekLower));
-if(matches.length){
-    const dtParts=k.replace("productie-","").split("-"); 
-    const ddmmjjjj=dtParts[2]+"-"+dtParts[1]+"-"+dtParts[0]; 
-    zoekResultaten.innerHTML+=`<h3>📅 ${ddmmjjjj}</h3>`; 
-    matches.forEach(m=>{
-        const card=document.createElement("div"); card.className="card readonly";
-        card.innerHTML=`<div class="card-body">
-        <div class="grid">
-            <div><label>Klant</label><input value="${m.klant}" readonly></div>
-            <div><label>Dossier</label><input value="${m.dossier}" readonly></div>
+function editRijHTML(r={}){
+    return `
+    <div class="productie-row ${r.status||""}" data-status="${r.status||""}" data-seconden="${r.seconden||0}">
+        <div><label>Type</label><select class="type-select">${types.map(t=>`<option ${r.type===t?"selected":""}>${t}</option>`).join("")}</select></div>
+        <div><label>Timer</label><div class="timer-display">${formatTimer(parseInt(r.seconden)||0)}</div></div>
+        <div><label>Uren</label><input type="number" step="0.01" class="uren-input" value="${r.uren||0}"></div>
+        <div style="flex:2"><label>Opmerking</label><textarea class="opmerking">${r.opmerking||""}</textarea></div>
+        <div class="actions">
+            <button class="timer-start">Start</button>
+            <button class="timer-stop">Stop</button>
+            <button class="done">V</button>
+            <button class="notdone">X</button>
+            <button class="remove" style="background:#555">Wis</button>
         </div>
-        ${m.rijen.map(r=>`<div class="productie-row ${r.status}" style="border-left:8px solid #ccc;">
-            <div><label>Type</label> ${r.type}</div>
-            <div><label>Uren</label> ${r.uren}</div>
-            <div><label>Opmerking</label> ${r.opmerking}</div>
-            <div><label>Timer</label> ${Math.round(r.seconden/60/15)*0.25}</div>
-        </div>`).join("")}
-        </div>`;
-        zoekResultaten.appendChild(card);
-    });
-}});
+    </div>`;
 }
 
-// === PRINT INFO ===
-function voegPrintInfoToe(){
-    let printInfo=document.querySelector(".print-info");
-    if(!printInfo){
-        printInfo=document.createElement("div");
-        printInfo.className="print-info";
-        printInfo.textContent=`Operator: ${operatorNaam.value || "—"} | Vervoer: ${vervoerSelect.value || "—"}`;
-        document.body.insertBefore(printInfo, document.body.firstChild.nextSibling);
+function nieuweKlant(data=null){
+    const card=document.createElement("div"); 
+    card.className="card";
+    card.innerHTML=`
+    <div class="card-header" onclick="toggleCard(this)">
+        <div class="info">
+            <span class="klant-naam">${data?.klant||"Nieuwe Klant"}</span>
+            <span class="dossier-nr">${data?.dossier||"—"}</span>
+            <span class="badge progress">In afwachting</span>
+        </div>
+        <span class="icon">▼</span>
+    </div>
+    <div class="card-body">
+        <div class="grid">
+            <div><label>Klant Naam</label><input class="in-klant" value="${data?.klant||""}" oninput="updateHeader(this)"></div>
+            <div><label>Dossier Nr</label><input class="in-dossier" value="${data?.dossier||""}" oninput="updateHeader(this)"></div>
+        </div>
+        <div class="rijen-container">${(data?.rijen||[{}]).map(editRijHTML).join("")}</div>
+        <button class="add" onclick="addRij(this)">+ Rij toevoegen</button>
+        <div style="margin-top:10px; font-weight:bold">Totaal klant: <span class="klantTotaal">0.00</span></div>
+        <button class="delete-klant" onclick="verwijderKlant(this)">Verwijder deze klant</button>
+    </div>`;
+    
+    if(data?.collapsed) card.classList.add("collapsed");
+    productieCards.appendChild(card);
+    bindEvents(card);
+    updateStatus(card);
+    bereken();
+}
+
+function bindEvents(scope){
+    scope.querySelectorAll("input, select, textarea").forEach(el => {
+        el.oninput = () => { opslaan(); bereken(); };
+    });
+    
+    scope.querySelectorAll(".timer-start").forEach(btn => btn.onclick = (e) => { e.stopPropagation(); startTimer(btn); });
+    scope.querySelectorAll(".timer-stop").forEach(btn => btn.onclick = (e) => { e.stopPropagation(); stopTimer(btn); });
+    scope.querySelectorAll(".done").forEach(btn => btn.onclick = () => markStatus(btn, "done-row"));
+    scope.querySelectorAll(".notdone").forEach(btn => btn.onclick = () => markStatus(btn, "notdone-row"));
+    scope.querySelectorAll(".remove").forEach(btn => btn.onclick = () => verwijderRij(btn));
+}
+
+function startTimer(btn){
+    if(actieveTimerRij) stopTimer(actieveTimerRij.querySelector(".timer-stop"));
+    
+    const rij = btn.closest(".productie-row");
+    rij.classList.add("running-row");
+    actieveTimerRij = rij;
+    
+    globalTimerInterval = setInterval(() => {
+        let sec = parseInt(rij.dataset.seconden) + 1;
+        rij.dataset.seconden = sec;
+        rij.querySelector(".timer-display").textContent = formatTimer(sec);
+    }, 1000);
+    
+    updateStatus(rij.closest(".card"));
+}
+
+function stopTimer(btn){
+    if(!actieveTimerRij) return;
+    clearInterval(globalTimerInterval);
+    
+    const rij = actieveTimerRij;
+    rij.classList.remove("running-row");
+    
+    const sec = parseInt(rij.dataset.seconden);
+    rij.querySelector(".uren-input").value = rond15(sec);
+    
+    actieveTimerRij = null;
+    updateStatus(rij.closest(".card"));
+    bereken();
+    opslaan();
+}
+
+function markStatus(btn, status){
+    const rij = btn.closest(".productie-row");
+    rij.className = `productie-row ${status}`;
+    rij.dataset.status = status;
+    updateStatus(rij.closest(".card"));
+    opslaan();
+}
+
+function updateStatus(card){
+    const rijen = [...card.querySelectorAll(".productie-row")];
+    const badge = card.querySelector(".badge");
+    
+    if(rijen.some(r => r.classList.contains("running-row"))){
+        badge.textContent = "Bezig..."; badge.className = "badge progress";
+        card.classList.add("status-running");
+    } else if(rijen.every(r => r.dataset.status === "done-row")){
+        badge.textContent = "Voltooid"; badge.className = "badge done";
+        card.classList.remove("status-running");
+    } else {
+        badge.textContent = "In productie"; badge.className = "badge progress";
+        card.classList.remove("status-running");
     }
 }
 
-// === INIT ===
-window.addEventListener("load", ()=>{
-    zetVandaag(); laadDag();
+function addRij(btn){
+    const container = btn.closest(".card-body").querySelector(".rijen-container");
+    const div = document.createElement("div");
+    div.innerHTML = editRijHTML();
+    const nieuweRij = div.firstElementChild;
+    container.appendChild(nieuweRij);
+    bindEvents(nieuweRij);
+    opslaan();
+}
+
+function verwijderRij(btn){
+    if(confirm("Rij verwijderen?")){
+        const card = btn.closest(".card");
+        btn.closest(".productie-row").remove();
+        updateStatus(card);
+        bereken();
+        opslaan();
+    }
+}
+
+function verwijderKlant(btn){
+    if(confirm("Hele klant verwijderen?")){
+        btn.closest(".card").remove();
+        bereken();
+        opslaan();
+    }
+}
+
+function updateHeader(input){
+    const card = input.closest(".card");
+    card.querySelector(".klant-naam").textContent = card.querySelector(".in-klant").value || "Nieuwe Klant";
+    card.querySelector(".dossier-nr").textContent = card.querySelector(".in-dossier").value || "—";
+    opslaan();
+}
+
+function toggleCard(header){
+    header.closest(".card").classList.toggle("collapsed");
+    opslaan();
+}
+
+function allesUitklappen(){ document.querySelectorAll(".card").forEach(c=>c.classList.remove("collapsed")); }
+function allesInklappen(){ document.querySelectorAll(".card").forEach(c=>c.classList.add("collapsed")); }
+
+function bereken(){
+    let dagTotaalUren = 0;
+    document.querySelectorAll(".card").forEach(card => {
+        let klantTotaal = 0;
+        card.querySelectorAll(".uren-input").forEach(inp => {
+            klantTotaal += parseFloat(inp.value) || 0;
+        });
+        card.querySelector(".klantTotaal").textContent = klantTotaal.toFixed(2);
+        dagTotaalUren += klantTotaal;
+    });
+    dagTotaal.textContent = dagTotaalUren.toFixed(2);
+}
+
+function opslaan(){
+    if(isAanHetLaden) return;
+    const data = {
+        operator: operatorNaam.value,
+        vervoer: vervoerSelect.value,
+        klanten: [...document.querySelectorAll(".card")].map(c => ({
+            klant: c.querySelector(".in-klant").value,
+            dossier: c.querySelector(".in-dossier").value,
+            collapsed: c.classList.contains("collapsed"),
+            rijen: [...c.querySelectorAll(".productie-row")].map(r => ({
+                type: r.querySelector(".type-select").value,
+                uren: r.querySelector(".uren-input").value,
+                opmerking: r.querySelector(".opmerking").value,
+                status: r.dataset.status,
+                seconden: r.dataset.seconden
+            }))
+        }))
+    };
+    localStorage.setItem(key(), JSON.stringify(data));
+}
+
+function laadDag(){
+    isAanHetLaden = true;
+    productieCards.innerHTML = "";
+    zoekResultaten.innerHTML = "";
+    
+    let data = JSON.parse(localStorage.getItem(key()) || "null");
+    if(data){
+        operatorNaam.value = data.operator || "";
+        vervoerSelect.value = data.vervoer || "Fiets";
+        data.klanten.forEach(nieuweKlant);
+    } else {
+        nieuweKlant();
+    }
+    
+    isAanHetLaden = false;
+    bereken();
+}
+
+function zoekDossier(val){
+    const zoekLower = val.toLowerCase();
+    if(!val) { zoekResultaten.innerHTML = ""; productieCards.style.display = "block"; return; }
+    
+    productieCards.style.display = "none";
+    zoekResultaten.innerHTML = "<h2>Zoekresultaten:</h2>";
+    
+    Object.keys(localStorage).forEach(k => {
+        if(k.startsWith("productie-")){
+            const d = JSON.parse(localStorage.getItem(k));
+            d.klanten.forEach(kl => {
+                if(kl.dossier.toLowerCase().includes(zoekLower) || kl.klant.toLowerCase().includes(zoekLower)){
+                    const res = document.createElement("div");
+                    res.className = "card";
+                    res.innerHTML = `<strong>Datum: ${k.replace("productie-","")}</strong><br>Klant: ${kl.klant} (Dossier: ${kl.dossier})`;
+                    zoekResultaten.appendChild(res);
+                }
+            });
+        }
+    });
+}
+
+datumInput.addEventListener("change", laadDag);
+window.addEventListener("load", () => {
+    zetVandaag();
+    laadDag();
 });
 </script>
-</div>
 </body>
 </html>

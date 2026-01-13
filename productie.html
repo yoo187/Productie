@@ -2,367 +2,295 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productie Portal v2.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Productie App</title>
     <style>
         :root {
             --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --success: #059669;
+            --success: #16a34a;
             --danger: #dc2626;
-            --warning: #d97706;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
+            --warning: #ca8a04;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --radius: 12px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
-        body { background: var(--bg); color: var(--text-main); padding: 40px 20px; line-height: 1.5; }
-        .container { max-width: 1100px; margin: 0 auto; }
-
-        /* Header & Dashboard Stats */
-        .header { margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .header h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.025em; color: var(--text-main); }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         
-        .top-stats { 
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px;
-        }
-        .stat-card { 
-            background: var(--card-bg); padding: 20px; border-radius: 16px; 
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid var(--border);
-        }
-        .stat-card label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
-        .stat-card .val { font-size: 1.25rem; font-weight: 700; color: var(--text-main); }
-
-        /* Controls */
-        .toolbar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
-        button { 
-            padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer; 
-            font-weight: 600; font-size: 0.9rem; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-flex; align-items: center; gap: 8px;
-        }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
-        .btn-outline { background: white; color: var(--text-main); border: 1px solid var(--border); }
-        .btn-outline:hover { background: #f1f5f9; }
-
-        /* Client Card */
-        .card { 
-            background: var(--card-bg); border-radius: 16px; margin-bottom: 16px; 
-            border: 1px solid var(--border); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-        .card-header { 
-            padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; 
-            cursor: pointer; user-select: none;
-        }
-        .card-header .client-info { display: flex; align-items: center; gap: 24px; flex: 1; }
-        .client-name-wrapper { display: flex; flex-direction: column; min-width: 200px; }
-        .client-name-wrapper .label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
-        .client-name-wrapper .value { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
-
-        .dossier-wrapper { padding: 4px 12px; background: #eff6ff; border-radius: 8px; border: 1px solid #dbeafe; }
-        .dossier-wrapper span { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--primary); }
-
-        .card-body { padding: 0 24px 24px 24px; border-top: 1px solid var(--border); margin-top: 0; }
-        .card.collapsed .card-body { display: none; }
-        .card.collapsed .card-header:hover { background: #fafafa; }
-
-        /* Row Styling */
-        .prod-row { 
-            display: grid; grid-template-columns: 2fr 160px 100px 3fr 180px; gap: 16px;
-            padding: 20px; background: #fff; border: 1px solid var(--border);
-            border-radius: 12px; margin-bottom: 12px; align-items: flex-end;
-        }
-        .prod-row.running { border-color: var(--warning); background: #fffbeb; }
-        .prod-row.done { border-left: 4px solid var(--success); }
-
-        .timer-box { 
-            background: #1e293b; color: white; padding: 12px; border-radius: 8px;
-            text-align: center; font-family: 'Tabular-Nums', monospace; font-size: 1.1rem; font-weight: 600;
+        body { 
+            background: var(--bg); 
+            color: #1e293b; 
+            padding: 10px;
+            padding-bottom: 100px; /* Ruimte voor de sticky footer */
         }
 
+        .container { max-width: 800px; margin: 0 auto; }
+
+        /* Header & Daginfo */
+        .app-header { background: #1e293b; color: white; padding: 20px; border-radius: var(--radius); margin-bottom: 15px; }
+        .app-header h1 { font-size: 1.2rem; margin-bottom: 15px; text-align: center; opacity: 0.9; }
+        
+        .header-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        
         /* Inputs */
+        label { display: block; font-size: 0.75rem; font-weight: 700; color: #94a3b8; margin-bottom: 4px; text-transform: uppercase; }
         input, select, textarea {
-            width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px;
-            font-size: 0.95rem; color: var(--text-main); background: #fcfcfc;
+            width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; /* 16px voorkomt auto-zoom op iPhone */
+            background: #fff;
         }
-        input:focus { outline: none; border-color: var(--primary); ring: 2px var(--primary); }
 
-        /* Progress Badge */
-        .status-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
-        .status-pill.active { background: #fef3c7; color: #92400e; animation: blink 1.5s infinite; }
-        .status-pill.waiting { background: #f1f5f9; color: #475569; }
-
-        @keyframes blink { 50% { opacity: 0.6; } }
-
-        @media print {
-            .toolbar, button, .btn-primary, .top-stats input, .top-stats select { display: none !important; }
-            body { padding: 0; background: white; }
-            .card { box-shadow: none; border: 1px solid #000; margin-bottom: 20px; page-break-inside: avoid; }
-            .card.collapsed .card-body { display: block !important; }
+        /* Vervoer Selectie */
+        .transport-toggle { display: flex; background: #334155; padding: 4px; border-radius: 8px; }
+        .transport-toggle input { display: none; }
+        .transport-toggle label { 
+            flex: 1; text-align: center; padding: 8px; margin: 0; color: #94a3b8; 
+            cursor: pointer; border-radius: 6px; transition: 0.2s;
         }
+        .transport-toggle input:checked + label { background: var(--primary); color: white; }
+
+        /* De Kaarten (Klanten) */
+        .card { 
+            background: var(--card); border-radius: var(--radius); margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden;
+            border-left: 5px solid #cbd5e1;
+        }
+        .card.active { border-left-color: var(--warning); background: #fffbeb; }
+        .card.done { border-left-color: var(--success); }
+
+        .card-header { padding: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .header-main { flex: 1; }
+        .client-title { font-weight: 800; font-size: 1.1rem; color: #0f172a; display: block; }
+        .dossier-sub { font-size: 0.85rem; color: #64748b; font-family: monospace; }
+
+        .card-body { padding: 15px; border-top: 1px solid #f1f5f9; }
+        .card.collapsed .card-body { display: none; }
+
+        /* Productie Rijen */
+        .prod-row { 
+            background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        .row-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        
+        .timer-display { 
+            grid-column: span 2; background: #0f172a; color: #fff; 
+            text-align: center; padding: 10px; border-radius: 6px;
+            font-size: 1.4rem; font-weight: 700; font-family: monospace;
+        }
+
+        /* Buttons */
+        .btn { 
+            padding: 12px; border-radius: 8px; border: none; font-weight: 700; 
+            cursor: pointer; font-size: 0.9rem; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-start { background: var(--warning); color: white; width: 100%; }
+        .btn-stop { background: #475569; color: white; width: 100%; }
+        .btn-add { background: var(--primary); color: white; margin-bottom: 10px; }
+        .btn-action { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+        .btn-done { background: var(--success); color: white; }
+
+        /* Sticky Footer */
+        .footer-stats {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: #fff; border-top: 1px solid #e2e8f0;
+            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.05); z-index: 100;
+        }
+
+        .total-box { line-height: 1; }
+        .total-box span { font-size: 0.7rem; color: #64748b; font-weight: 700; }
+        .total-box div { font-size: 1.5rem; font-weight: 900; color: var(--primary); }
+
+        @media print { .footer-stats, .btn, .transport-toggle { display: none !important; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h1>Productie Registratie Portal</h1>
-        <div style="text-align: right">
-            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted)">HUIDIG TOTAAL</span>
-            <div style="font-size: 1.8rem; font-weight: 800; color: var(--success)"><span id="dagTotaal">0.00</span> <small style="font-size: 0.9rem">uren</small></div>
+    <div class="app-header">
+        <h1>Productie Registratie</h1>
+        <div class="header-grid">
+            <div>
+                <label>Operator</label>
+                <input type="text" id="operator" placeholder="Naam" oninput="save()">
+            </div>
+            <div>
+                <label>Vervoer</label>
+                <div class="transport-toggle">
+                    <input type="radio" name="tr" id="f" value="Fiets" checked onchange="save()">
+                    <label for="f">🚲</label>
+                    <input type="radio" name="tr" id="a" value="Auto" onchange="save()">
+                    <label for="a">🚗</label>
+                </div>
+            </div>
         </div>
-    </div>
-
-    <div class="top-stats">
-        <div class="stat-card">
-            <label>Operator</label>
-            <input type="text" id="operator" placeholder="Naam invoeren..." oninput="autoSave()">
-        </div>
-        <div class="stat-card">
-            <label>Logistiek</label>
-            <select id="vervoer" onchange="autoSave()">
-                <option value="Fiets">🚲 Fietskoerier</option>
-                <option value="Auto">🚗 Bedrijfswagen</option>
-            </select>
-        </div>
-        <div class="stat-card">
+        <div style="margin-top:10px">
             <label>Datum</label>
-            <input type="date" id="datum" onchange="loadDayData()">
+            <input type="date" id="datum" onchange="load()">
         </div>
     </div>
 
-    <div class="toolbar">
-        <button class="btn-primary" onclick="addNewClient()">+ Nieuwe Klant Toevoegen</button>
-        <button class="btn-outline" onclick="toggleCollapse(false)">Alles Openen</button>
-        <button class="btn-outline" onclick="toggleCollapse(true)">Alles Sluiten</button>
-        <button class="btn-outline" onclick="window.print()" style="margin-left: auto">📄 PDF Rapport</button>
-    </div>
+    <div id="klantenLijst"></div>
 
-    <div id="clientsContainer"></div>
+    <button class="btn btn-add" style="width: 100%;" onclick="voegKlantToe()">+ NIEUWE KLANT</button>
+</div>
+
+<div class="footer-stats">
+    <div class="total-box">
+        <span>DAG TOTAAL</span>
+        <div id="dagTotaal">0.00</div>
+    </div>
+    <button class="btn btn-done" onclick="window.print()">EXPORT PDF</button>
 </div>
 
 <script>
-    const PROF_TYPES = ["Raam kader", "Raam vleugel", "Deur kader", "Deur vleugel", "Schuifraam kader", "Schuifraam vleugel", "T-profiel", "Glaslatten", "Beslag", "Opkuisen", "Montage", "Andere"];
-    let activeInterval = null;
-    let activeRow = null;
+    const TYPES = ["Raam kader", "Raam vleugel", "Deur kader", "Deur vleugel", "Schuifraam kader", "Schuifraam vleugel", "T-profiel", "Glaslatten", "Beslag", "Opkuisen", "Montage", "Andere"];
+    let timerIdx = null;
+    let timerInt = null;
 
-    // Initialisatie
-    window.onload = () => {
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('datum').value = today;
-        loadDayData();
-    };
-
-    function getDBKey() { return 'enterprise_prod_' + document.getElementById('datum').value; }
-
-    function addNewClient(data = null) {
-        const id = 'client_' + Math.random().toString(36).substr(2, 9);
-        const html = `
-            <div class="card ${data?.collapsed ? 'collapsed' : ''}" id="${id}">
-                <div class="card-header" onclick="handleCollapse('${id}')">
-                    <div class="client-info">
-                        <div class="client-name-wrapper">
-                            <span class="label">Klant</span>
-                            <span class="value client-title-text">${data?.name || 'Nieuwe Relatie'}</span>
-                        </div>
-                        <div class="dossier-wrapper">
-                            <span># <span class="dossier-title-text">${data?.dossier || '0000'}</span></span>
-                        </div>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:15px">
-                        <span class="status-pill ${data?.isRunning ? 'active' : 'waiting'}">${data?.isRunning ? 'Bezig' : 'Standby'}</span>
-                        <strong style="color:var(--text-muted)">∑ <span class="client-total-hours">0.00</span> u</strong>
-                        <span class="chevron">▼</span>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin: 20px 0;">
-                        <div>
-                            <label style="font-size:0.75rem; font-weight:700; margin-bottom:5px; display:block">KLANTNAAM</label>
-                            <input type="text" class="in-name" value="${data?.name || ''}" placeholder="Naam klant..." oninput="syncHeader('${id}')">
-                        </div>
-                        <div>
-                            <label style="font-size:0.75rem; font-weight:700; margin-bottom:5px; display:block">DOSSIERNUMMER</label>
-                            <input type="text" class="in-dossier" value="${data?.dossier || ''}" placeholder="Bijv. 2024-001" oninput="syncHeader('${id}')">
-                        </div>
-                    </div>
-                    <div class="rows-holder"></div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px">
-                        <button class="btn-outline" onclick="addRowToClient('${id}')">+ Rij toevoegen</button>
-                        <button style="color:var(--danger); background:none; border:none; cursor:pointer; font-weight:600" onclick="deleteClient('${id}')">Klant verwijderen</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.getElementById('clientsContainer').insertAdjacentHTML('beforeend', html);
-        
-        if (data && data.rows) {
-            data.rows.forEach(r => addRowToClient(id, r));
-        } else {
-            addRowToClient(id);
-        }
-        calculateAll();
-    }
-
-    function addRowToClient(clientId, rData = null) {
-        const holder = document.getElementById(clientId).querySelector('.rows-holder');
-        const rowId = 'row_' + Math.random().toString(36).substr(2, 9);
-        const html = `
-            <div class="prod-row ${rData?.status || ''}" id="${rowId}" data-sec="${rData?.sec || 0}">
-                <div>
-                    <label style="font-size:0.7rem; font-weight:700">TYPE PRODUCTIE</label>
-                    <select class="sel-type">
-                        ${PROF_TYPES.map(t => `<option ${rData?.type === t ? 'selected' : ''}>${t}</option>`).join('')}
-                    </select>
-                </div>
-                <div>
-                    <div class="timer-box">${formatTime(rData?.sec || 0)}</div>
-                    <div style="display:flex; gap:5px; margin-top:5px">
-                        <button class="btn-outline" style="padding:5px; flex:1; font-size:0.7rem" onclick="timerControl('${rowId}', 'start')">START</button>
-                        <button class="btn-outline" style="padding:5px; flex:1; font-size:0.7rem" onclick="timerControl('${rowId}', 'stop')">STOP</button>
-                    </div>
-                </div>
-                <div>
-                    <label style="font-size:0.7rem; font-weight:700">UREN</label>
-                    <input type="number" step="0.01" class="in-hours" value="${rData?.hours || '0.00'}" oninput="calculateAll()">
-                </div>
-                <div>
-                    <label style="font-size:0.7rem; font-weight:700">OPMERKINGEN</label>
-                    <textarea rows="1" class="in-note" placeholder="Optioneel...">${rData?.note || ''}</textarea>
-                </div>
-                <div style="display:flex; gap:5px">
-                    <button class="btn-outline" onclick="setRowStatus('${rowId}', 'done')" style="color:var(--success)">✔</button>
-                    <button class="btn-outline" onclick="setRowStatus('${rowId}', 'fail')" style="color:var(--danger)">✖</button>
-                    <button class="btn-outline" onclick="this.closest('.prod-row').remove(); calculateAll(); autoSave();">Wissen</button>
-                </div>
-            </div>
-        `;
-        holder.insertAdjacentHTML('beforeend', html);
-    }
-
-    // Timer Motor
-    function timerControl(rowId, action) {
-        const row = document.getElementById(rowId);
-        const card = row.closest('.card');
-
-        if (action === 'start') {
-            if (activeRow) timerControl(activeRow.id, 'stop');
-            activeRow = row;
-            row.classList.add('running');
-            card.querySelector('.status-pill').className = 'status-pill active';
-            card.querySelector('.status-pill').innerText = 'Bezig';
-            
-            activeInterval = setInterval(() => {
-                row.dataset.sec = parseInt(row.dataset.sec) + 1;
-                row.querySelector('.timer-box').innerText = formatTime(row.dataset.sec);
-            }, 1000);
-        } else {
-            clearInterval(activeInterval);
-            row.classList.remove('running');
-            const hours = (Math.round((parseInt(row.dataset.sec) / 60) / 15) * 0.25).toFixed(2);
-            row.querySelector('.in-hours').value = hours;
-            card.querySelector('.status-pill').className = 'status-pill waiting';
-            card.querySelector('.status-pill').innerText = 'Standby';
-            activeRow = null;
-            calculateAll();
-            autoSave();
-        }
-    }
-
-    // Helpers
-    function formatTime(s) {
-        const h = Math.floor(s / 3600);
-        const m = Math.floor((s % 3600) / 60);
-        const sec = s % 60;
-        return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
-    }
-
-    function syncHeader(id) {
-        const card = document.getElementById(id);
-        card.querySelector('.client-title-text').innerText = card.querySelector('.in-name').value || 'Nieuwe Relatie';
-        card.querySelector('.dossier-title-text').innerText = card.querySelector('.in-dossier').value || '0000';
-        autoSave();
-    }
-
-    function handleCollapse(id) {
-        const card = document.getElementById(id);
-        if (event.target.closest('input') || event.target.closest('button')) return;
-        card.classList.toggle('collapsed');
-        autoSave();
-    }
-
-    function setRowStatus(rowId, status) {
-        const row = document.getElementById(rowId);
-        row.classList.remove('done', 'fail');
-        row.classList.add(status === 'done' ? 'done' : 'fail');
-        autoSave();
-    }
-
-    function calculateAll() {
-        let grandTotal = 0;
-        document.querySelectorAll('.card').forEach(card => {
-            let clientTotal = 0;
-            card.querySelectorAll('.in-hours').forEach(input => {
-                clientTotal += parseFloat(input.value) || 0;
-            });
-            card.querySelector('.client-total-hours').innerText = clientTotal.toFixed(2);
-            grandTotal += clientTotal;
-        });
-        document.getElementById('dagTotaal').innerText = grandTotal.toFixed(2);
-    }
-
-    function autoSave() {
+    function save() {
         const data = {
-            operator: document.getElementById('operator').value,
-            vervoer: document.getElementById('vervoer').value,
-            clients: [...document.querySelectorAll('.card')].map(c => ({
-                name: c.querySelector('.in-name').value,
-                dossier: c.querySelector('.in-dossier').value,
-                collapsed: c.classList.contains('collapsed'),
+            op: document.getElementById('operator').value,
+            tr: document.querySelector('input[name="tr"]:checked').value,
+            klanten: [...document.querySelectorAll('.card')].map(c => ({
+                n: c.querySelector('.in-n').value,
+                d: c.querySelector('.in-d').value,
+                cl: c.classList.contains('collapsed'),
                 rows: [...c.querySelectorAll('.prod-row')].map(r => ({
-                    type: r.querySelector('.sel-type').value,
-                    sec: r.dataset.sec,
-                    hours: r.querySelector('.in-hours').value,
-                    note: r.querySelector('.in-note').value,
-                    status: r.classList.contains('done') ? 'done' : (r.classList.contains('fail') ? 'fail' : '')
+                    t: r.querySelector('.sel-t').value,
+                    s: r.dataset.sec,
+                    u: r.querySelector('.in-u').value,
+                    o: r.querySelector('.in-o').value,
+                    st: r.dataset.status
                 }))
             }))
         };
-        localStorage.setItem(getDBKey(), JSON.stringify(data));
+        localStorage.setItem('prod_v3_' + document.getElementById('datum').value, JSON.stringify(data));
+        calc();
     }
 
-    function loadDayData() {
-        document.getElementById('clientsContainer').innerHTML = '';
-        const raw = localStorage.getItem(getDBKey());
+    function load() {
+        document.getElementById('klantenLijst').innerHTML = '';
+        const raw = localStorage.getItem('prod_v3_' + document.getElementById('datum').value);
         if (raw) {
             const data = JSON.parse(raw);
-            document.getElementById('operator').value = data.operator || '';
-            document.getElementById('vervoer').value = data.vervoer || 'Fiets';
-            data.clients.forEach(addNewClient);
+            document.getElementById('operator').value = data.op;
+            document.getElementById(data.tr === 'Fiets' ? 'f' : 'a').checked = true;
+            data.klanten.forEach(k => voegKlantToe(k));
         } else {
-            addNewClient();
+            voegKlantToe();
         }
-        calculateAll();
+        calc();
     }
 
-    function deleteClient(id) {
-        if(confirm("Weet u zeker dat u deze klant en alle bijbehorende data wilt verwijderen?")) {
-            document.getElementById(id).remove();
-            calculateAll();
-            autoSave();
+    function voegKlantToe(data = null) {
+        const id = 'k' + Math.random().toString(36).substr(2,5);
+        const html = `
+            <div class="card ${data?.cl ? 'collapsed' : ''}" id="${id}">
+                <div class="card-header" onclick="toggle('${id}')">
+                    <div class="header-main">
+                        <span class="client-title">${data?.n || 'Nieuwe Klant'}</span>
+                        <span class="dossier-sub">Dossier: ${data?.d || '---'}</span>
+                    </div>
+                    <div style="text-align:right">
+                        <div style="font-weight:900; color:var(--primary)"><span class="k-uur">0.00</span>u</div>
+                        <div style="font-size:0.6rem; color:#94a3b8">TIJK</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <label>Klantnaam</label>
+                    <input type="text" class="in-n" value="${data?.n || ''}" oninput="sync('${id}')" style="margin-bottom:10px">
+                    <label>Dossiernummer</label>
+                    <input type="text" class="in-d" value="${data?.d || ''}" oninput="sync('${id}')" style="margin-bottom:15px">
+                    <div class="rijen"></div>
+                    <button class="btn btn-action" style="width:100%" onclick="voegRij('${id}')">+ RIJ TOEVOEGEN</button>
+                    <button onclick="del('${id}')" style="width:100%; background:none; border:none; color:var(--danger); margin-top:15px; font-size:0.8rem; font-weight:700">KLANT VERWIJDEREN</button>
+                </div>
+            </div>`;
+        document.getElementById('klantenLijst').insertAdjacentHTML('beforeend', html);
+        if(data?.rows) data.rows.forEach(r => voegRij(id, r)); else voegRij(id);
+    }
+
+    function voegRij(kid, r = null) {
+        const rid = 'r' + Math.random().toString(36).substr(2,5);
+        const html = `
+            <div class="prod-row" id="${rid}" data-sec="${r?.s || 0}" data-status="${r?.st || ''}">
+                <div class="timer-display">${fmt(r?.s || 0)}</div>
+                <div class="row-grid">
+                    <button class="btn btn-start" onclick="tglT('${rid}', true)">START</button>
+                    <button class="btn btn-stop" onclick="tglT('${rid}', false)">STOP</button>
+                </div>
+                <div class="row-grid">
+                    <div>
+                        <label>Type</label>
+                        <select class="sel-t" onchange="save()">
+                            ${TYPES.map(t => `<option ${r?.t === t ? 'selected' : ''}>${t}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label>Uren</label>
+                        <input type="number" class="in-u" value="${r?.u || '0.00'}" step="0.25" oninput="save()">
+                    </div>
+                </div>
+                <textarea class="in-o" placeholder="Opmerking..." oninput="save()">${r?.o || ''}</textarea>
+            </div>`;
+        document.getElementById(kid).querySelector('.rijen').insertAdjacentHTML('beforeend', html);
+    }
+
+    function tglT(rid, start) {
+        const el = document.getElementById(rid);
+        clearInterval(timerInt);
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        
+        if (start) {
+            el.closest('.card').classList.add('active');
+            timerInt = setInterval(() => {
+                el.dataset.sec = parseInt(el.dataset.sec) + 1;
+                el.querySelector('.timer-display').innerText = fmt(el.dataset.sec);
+            }, 1000);
+        } else {
+            const h = (Math.round((parseInt(el.dataset.sec)/60)/15)*0.25).toFixed(2);
+            el.querySelector('.in-u').value = h;
+            save();
         }
     }
 
-    function toggleCollapse(shouldCollapse) {
+    function fmt(s) {
+        const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=s%60;
+        return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+    }
+
+    function sync(id) {
+        const c = document.getElementById(id);
+        c.querySelector('.client-title').innerText = c.querySelector('.in-n').value || 'Nieuwe Klant';
+        c.querySelector('.dossier-sub').innerText = 'Dossier: ' + (c.querySelector('.in-d').value || '---');
+        save();
+    }
+
+    function toggle(id) {
+        if(event.target.closest('input') || event.target.closest('button')) return;
+        document.getElementById(id).classList.toggle('collapsed');
+        save();
+    }
+
+    function del(id) { if(confirm("Klant wissen?")) { document.getElementById(id).remove(); save(); } }
+
+    function calc() {
+        let dag = 0;
         document.querySelectorAll('.card').forEach(c => {
-            shouldCollapse ? c.classList.add('collapsed') : c.classList.remove('collapsed');
+            let kt = 0;
+            c.querySelectorAll('.in-u').forEach(i => kt += parseFloat(i.value) || 0);
+            c.querySelector('.k-uur').innerText = kt.toFixed(2);
+            dag += kt;
         });
-        autoSave();
+        document.getElementById('dagTotaal').innerText = dag.toFixed(2);
     }
+
+    window.onload = () => {
+        document.getElementById('datum').value = new Date().toISOString().split('T')[0];
+        load();
+    };
 </script>
 
 </body>

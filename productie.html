@@ -27,9 +27,8 @@ button:active{transform:translateY(0) scale(0.97);}
 .add{background:#2ecc71;color:#fff}.remove{background:#e74c3c;color:#fff}
 .done{background:#27ae60;color:#fff}.notdone{background:#c0392b;color:#fff}
 .delete-klant{background:#555;color:#fff}
-
-.timer-start{background:#3498db;color:#fff}   /* TIMER TOEVOEGING */
-.timer-stop{background:#7f8c8d;color:#fff}    /* TIMER TOEVOEGING */
+.timer-start{background:#3498db;color:#fff}   
+.timer-stop{background:#7f8c8d;color:#fff}    
 
 .card{background:#fff;border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,.08);overflow:hidden;border-left:8px solid #ccc;transition:all .35s ease}
 .card.status-done{border-color:#27ae60}.card.status-notdone{border-color:#c0392b}.card.status-progress{border-color:#f39c12}
@@ -54,7 +53,7 @@ button:active{transform:translateY(0) scale(0.97);}
 @keyframes removeRowAnim{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 
-.timer-display{font-weight:bold;text-align:center;padding:4px;background:#eef3f7;border-radius:6px} /* TIMER TOEVOEGING */
+.timer-display{font-weight:bold;text-align:center;padding:4px;background:#eef3f7;border-radius:6px} 
 
 @media(min-width:768px){
   .grid{flex-direction:row}
@@ -72,12 +71,12 @@ button:active{transform:translateY(0) scale(0.97);}
 <div class="app">
 <h1>Productie Registratie</h1>
 
-<div class="grid">
-  <div>
+<div class="grid" style="margin-bottom:16px; gap:12px;">
+  <div style="flex:1;">
     <label>Naam operator</label>
-    <input id="operatorNaam">
+    <input type="text" id="operatorNaam" placeholder="Naam operator">
   </div>
-  <div>
+  <div style="flex:1;">
     <label>Vervoer</label>
     <select id="vervoerSelect">
       <option value="Fiets">Fiets</option>
@@ -92,7 +91,7 @@ button:active{transform:translateY(0) scale(0.97);}
 <div class="controls">
   <button onclick="allesUitklappen()">Alles uitklappen</button>
   <button onclick="allesInklappen()">Alles inklappen</button>
-  <button onclick="voegPrintInfoToe();window.print()">Print / PDF</button>
+  <button onclick="voegPrintInfoToe(); window.print()">Print / PDF</button>
 </div>
 
 <div id="zoekResultaten"></div>
@@ -102,8 +101,6 @@ button:active{transform:translateY(0) scale(0.97);}
 </div>
 
 <script>
-/* ===== ORIGINELE JS – ONGEWIJZIGD ===== */
-
 const types=["Raam kader","Raam vleugel","Deur kader","Deur vleugel","Schuifraam kader","Schuifraam vleugel","T-profiel","Glaslatten","Beslag","Opkuisen","Montage","Andere"];
 const datum=document.getElementById("datum");
 const operatorNaam=document.getElementById("operatorNaam");
@@ -111,30 +108,29 @@ const vervoerSelect=document.getElementById("vervoerSelect");
 const productieCards=document.getElementById("productieCards");
 const zoekResultaten=document.getElementById("zoekResultaten");
 const dagTotaal=document.getElementById("dagTotaal");
-
+let isAanHetLaden = false;
 let actieveTimer=null; // TIMER TOEVOEGING
+
+function zetVandaag(){
+  const nu = new Date();
+  const offset = nu.getTimezoneOffset()*60000; // Belgische tijd correct
+  const belgie = new Date(nu.getTime()-offset+3600000); 
+  const yyyy = belgie.getFullYear();
+  const mm = String(belgie.getMonth()+1).padStart(2,'0');
+  const dd = String(belgie.getDate()).padStart(2,'0');
+  datum.value = `${yyyy}-${mm}-${dd}`;
+}
 
 function key(){ return "productie-"+datum.value; }
 
-/* ===== TIMER TOEVOEGING ===== */
-function formatTimer(sec){
-  const h=String(Math.floor(sec/3600)).padStart(2,'0');
-  const m=String(Math.floor((sec%3600)/60)).padStart(2,'0');
-  const s=String(Math.floor(sec%60)).padStart(2,'0');
-  return `${h}:${m}:${s}`;
-}
-function rond15(sec){
-  const min=Math.round((sec/60)/15)*15;
-  return (min/60).toFixed(2);
-}
-/* =========================== */
+function formatTimer(sec){const h=String(Math.floor(sec/3600)).padStart(2,'0'); const m=String(Math.floor((sec%3600)/60)).padStart(2,'0'); const s=String(Math.floor(sec%60)).padStart(2,'0'); return `${h}:${m}:${s}`;}
+function rond15(sec){const min=Math.round((sec/60)/15)*15; return (min/60).toFixed(2);}
 
-function editRijHTML(r={}){
-return `<div class="productie-row added ${r.status||""}" data-status="${r.status||""}" data-seconden="${r.seconden||0}" data-running="false">
+function editRijHTML(r={}){return `<div class="productie-row added ${r.status||""}" data-status="${r.status||""}" data-seconden="${r.seconden||0}" data-running="false">
 <div><label>Type</label><select>${types.map(t=>`<option ${r.type===t?"selected":""}>${t}</option>`).join("")}</select></div>
 <div>
-  <label>Timer</label>
-  <div class="timer-display">${formatTimer(r.seconden||0)}</div>
+<label>Timer</label>
+<div class="timer-display">${formatTimer(r.seconden||0)}</div>
 </div>
 <div><label>Uren</label><input type="number" step="0.01" class="uren-input" value="${r.uren||0}"></div>
 <div><label>Opmerking</label><textarea class="opmerking">${r.opmerking||""}</textarea></div>
@@ -144,12 +140,77 @@ return `<div class="productie-row added ${r.status||""}" data-status="${r.status
 <button class="done">Voltooid</button>
 <button class="notdone">Niet voltooid</button>
 <button class="remove">X</button>
-</div></div>`;
+</div></div>`;}
+
+function nieuweKlant(data=null){
+  const card=document.createElement("div");
+  card.className="card";
+  card.innerHTML=`<div class="card-header" onclick="toggleCard(this)">
+    <div class="info">
+      <span class="klant-naam">${data?.klant||"—"}</span>
+      <span class="dossier-nr">${data?.dossier||"—"}</span>
+      <span class="badge progress">…</span>
+    </div>
+    <span class="icon">▼</span>
+  </div>
+  <div class="card-body">
+    <div class="grid">
+      <div><label>Klant</label><input value="${data?.klant||""}" oninput="updateHeader(this)"></div>
+      <div><label>Dossier</label><input value="${data?.dossier||""}" oninput="updateHeader(this)"></div>
+    </div>
+    ${(data?.rijen||[{}]).map(editRijHTML).join("")}
+    <button class="add">Rij toevoegen</button>
+    <strong>Totaal klant: <span class="klantTotaal">0.00</span></strong>
+    <button class="delete-klant">Klant verwijderen</button>
+  </div>`;
+  productieCards.appendChild(card);
+  bind(card);
+  updateStatus(card);
+  bereken();
 }
 
-/* ===== REST VAN JE ORIGINELE JS BLIJFT IDENTIEK ===== */
-/* (opslaan / laden / zoeken / status / animaties) */
+function bind(c){
+  c.querySelectorAll(".timer-start").forEach(b=>{b.onclick=()=>startTimer(b.closest(".productie-row"));});
+  c.querySelectorAll(".timer-stop").forEach(b=>{b.onclick=()=>stopTimer(b.closest(".productie-row"));});
+  c.querySelectorAll(".productie-row .done").forEach(btn=>{btn.onclick=()=>markDone(btn);});
+  c.querySelectorAll(".productie-row .notdone").forEach(btn=>{btn.onclick=()=>markNotDone(btn);});
+  c.querySelectorAll(".productie-row .remove").forEach(btn=>{btn.onclick=()=>verwijderRij(btn);});
+  c.querySelectorAll(".delete-klant").forEach(btn=>{btn.onclick=()=>verwijderKlant(btn);});
+  c.querySelectorAll(".add").forEach(btn=>{btn.onclick=()=>addRij(btn);});
+}
 
+function startTimer(row){
+  if(actieveTimer) stopTimer(actieveTimer);
+  if(row.dataset.running==="true")return;
+  row.dataset.running="true";
+  row.dataset.start=Date.now();
+  actieveTimer=row;
+  row.interval=setInterval(()=>{
+    const sec=Number(row.dataset.seconden)+(Date.now()-row.dataset.start)/1000;
+    row.querySelector(".timer-display").textContent=formatTimer(sec);
+  },1000);
+}
+
+function stopTimer(row){
+  if(row.dataset.running!=="true")return;
+  clearInterval(row.interval);
+  const sec=Number(row.dataset.seconden)+(Date.now()-row.dataset.start)/1000;
+  row.dataset.seconden=sec;
+  row.dataset.running="false";
+  row.querySelector(".uren-input").value=rond15(sec);
+  row.querySelector(".timer-display").textContent=formatTimer(sec);
+  actieveTimer=null;
+  opslaan();
+}
+
+/* ===== DE REST VAN DE FUNCTIES (markDone, markNotDone, opslaan, laadDag, zoekDossier) blijven exact zoals in de allereerste code ===== */
+
+/* Zet datum vandaag */
+zetVandaag();
+datum.addEventListener("change", ()=>{laadDag();});
+operatorNaam.addEventListener("input", opslaan);
+vervoerSelect.addEventListener("change", opslaan);
+window.addEventListener("load", ()=>{laadDag();});
 </script>
 </body>
 </html>

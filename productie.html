@@ -3,113 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Productie App</title>
+    <title>Productie App Pro</title>
     <style>
         :root {
             --primary: #2563eb;
             --success: #16a34a;
             --danger: #dc2626;
             --warning: #ca8a04;
-            --bg: #f1f5f9;
+            --bg: #f8fafc;
             --card: #ffffff;
             --radius: 12px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        
-        body { 
-            background: var(--bg); 
-            color: #1e293b; 
-            padding: 10px;
-            padding-bottom: 100px; /* Ruimte voor de sticky footer */
-        }
-
+        body { background: var(--bg); color: #1e293b; padding: 10px; padding-bottom: 90px; }
         .container { max-width: 800px; margin: 0 auto; }
 
-        /* Header & Daginfo */
-        .app-header { background: #1e293b; color: white; padding: 20px; border-radius: var(--radius); margin-bottom: 15px; }
-        .app-header h1 { font-size: 1.2rem; margin-bottom: 15px; text-align: center; opacity: 0.9; }
-        
+        /* App Header */
+        .app-header { background: #1e293b; color: white; padding: 15px; border-radius: var(--radius); margin-bottom: 12px; }
         .header-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         
-        /* Inputs */
-        label { display: block; font-size: 0.75rem; font-weight: 700; color: #94a3b8; margin-bottom: 4px; text-transform: uppercase; }
-        input, select, textarea {
-            width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; /* 16px voorkomt auto-zoom op iPhone */
-            background: #fff;
-        }
+        label { display: block; font-size: 0.7rem; font-weight: 700; color: #94a3b8; margin-bottom: 3px; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; background: #fff; }
 
-        /* Vervoer Selectie */
-        .transport-toggle { display: flex; background: #334155; padding: 4px; border-radius: 8px; }
+        /* Vervoer Toggle (Icoontjes in App) */
+        .transport-toggle { display: flex; background: #334155; padding: 3px; border-radius: 8px; }
         .transport-toggle input { display: none; }
-        .transport-toggle label { 
-            flex: 1; text-align: center; padding: 8px; margin: 0; color: #94a3b8; 
-            cursor: pointer; border-radius: 6px; transition: 0.2s;
-        }
+        .transport-toggle label { flex: 1; text-align: center; padding: 6px; margin: 0; cursor: pointer; border-radius: 6px; font-size: 1.2rem; }
         .transport-toggle input:checked + label { background: var(--primary); color: white; }
 
-        /* De Kaarten (Klanten) */
+        /* Card System */
         .card { 
             background: var(--card); border-radius: var(--radius); margin-bottom: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden;
-            border-left: 5px solid #cbd5e1;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden;
+            border-left: 8px solid #cbd5e1; transition: 0.2s;
         }
+        .card.status-done { border-left-color: var(--success); }
+        .card.status-pending { border-left-color: var(--danger); }
         .card.active { border-left-color: var(--warning); background: #fffbeb; }
-        .card.done { border-left-color: var(--success); }
 
-        .card-header { padding: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .card-header { padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .header-main { flex: 1; }
-        .client-title { font-weight: 800; font-size: 1.1rem; color: #0f172a; display: block; }
-        .dossier-sub { font-size: 0.85rem; color: #64748b; font-family: monospace; }
+        .client-title { font-weight: 800; font-size: 1rem; color: #0f172a; display: block; }
+        .dossier-sub { font-size: 0.8rem; color: #64748b; font-family: monospace; }
 
         .card-body { padding: 15px; border-top: 1px solid #f1f5f9; }
         .card.collapsed .card-body { display: none; }
 
-        /* Productie Rijen */
-        .prod-row { 
-            background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 10px;
-            border: 1px solid #e2e8f0;
-        }
-        .row-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        /* Rows */
+        .prod-row { background: #f8fafc; padding: 10px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e2e8f0; }
+        .timer-display { background: #0f172a; color: #fff; text-align: center; padding: 8px; border-radius: 6px; font-size: 1.3rem; font-weight: 700; font-family: monospace; margin-bottom: 8px; }
         
-        .timer-display { 
-            grid-column: span 2; background: #0f172a; color: #fff; 
-            text-align: center; padding: 10px; border-radius: 6px;
-            font-size: 1.4rem; font-weight: 700; font-family: monospace;
-        }
-
         /* Buttons */
-        .btn { 
-            padding: 12px; border-radius: 8px; border: none; font-weight: 700; 
-            cursor: pointer; font-size: 0.9rem; transition: 0.2s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+        .btn { padding: 12px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 5px; transition: 0.1s; }
+        .btn:active { transform: scale(0.98); }
+        .btn-start { background: var(--warning); color: white; }
+        .btn-stop { background: #64748b; color: white; }
+        .btn-add-row { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; width: 100%; margin: 5px 0 15px 0; }
+        .btn-status-v { background: #dcfce7; color: var(--success); border: 1px solid var(--success); flex: 1; }
+        .btn-status-x { background: #fee2e2; color: var(--danger); border: 1px solid var(--danger); flex: 1; }
+        .btn-main { background: var(--primary); color: white; width: 100%; margin-top: 10px; }
+
+        /* Footer */
+        .footer-stats { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e2e8f0; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        .total-box div { font-size: 1.4rem; font-weight: 900; color: var(--primary); }
+
+        /* --- PRINT STYLES --- */
+        .print-only { display: none; }
+        
+        @media print {
+            body { padding: 0; background: white; font-size: 10pt; }
+            .app-header, .btn, .footer-stats, .transport-toggle, .btn-status-v, .btn-status-x, .btn-add-row { display: none !important; }
+            .container { max-width: 100%; }
+            .card { border: 1px solid #ddd !important; margin-bottom: 15px; box-shadow: none; border-left: 12px solid #ddd !important; break-inside: avoid; }
+            .card.status-done { border-left: 12px solid #16a34a !important; }
+            .card.status-pending { border-left: 12px solid #dc2626 !important; }
+            .card.collapsed .card-body { display: block !important; }
+            .print-only { display: block !important; }
+            .print-head { border-bottom: 2px solid #333; margin-bottom: 20px; padding-bottom: 10px; }
+            .prod-row { display: grid; grid-template-columns: 1.5fr 0.5fr 2.5fr; border: none; border-bottom: 1px solid #eee; background: none; padding: 6px 0; margin: 0; border-radius: 0; }
+            .timer-display, label, .btn-grid { display: none !important; }
+            input, select, textarea { border: none !important; padding: 0 !important; font-size: 10pt; background: none; appearance: none; pointer-events: none; }
+            textarea { resize: none; overflow: hidden; }
+            .client-title { font-size: 12pt; color: #000; }
         }
-        .btn-start { background: var(--warning); color: white; width: 100%; }
-        .btn-stop { background: #475569; color: white; width: 100%; }
-        .btn-add { background: var(--primary); color: white; margin-bottom: 10px; }
-        .btn-action { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
-        .btn-done { background: var(--success); color: white; }
-
-        /* Sticky Footer */
-        .footer-stats {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: #fff; border-top: 1px solid #e2e8f0;
-            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.05); z-index: 100;
-        }
-
-        .total-box { line-height: 1; }
-        .total-box span { font-size: 0.7rem; color: #64748b; font-weight: 700; }
-        .total-box div { font-size: 1.5rem; font-weight: 900; color: var(--primary); }
-
-        @media print { .footer-stats, .btn, .transport-toggle { display: none !important; } }
     </style>
 </head>
 <body>
 
+<div class="print-only print-head">
+    <h1 style="font-size: 20pt; margin-bottom: 5px;">Productieoverzicht</h1>
+    <div id="printMeta" style="font-size: 11pt; font-weight: bold; color: #444;"></div>
+</div>
+
 <div class="container">
     <div class="app-header">
-        <h1>Productie Registratie</h1>
         <div class="header-grid">
             <div>
                 <label>Operator</label>
@@ -120,7 +108,7 @@
                 <div class="transport-toggle">
                     <input type="radio" name="tr" id="f" value="Fiets" checked onchange="save()">
                     <label for="f">🚲</label>
-                    <input type="radio" name="tr" id="a" value="Auto" onchange="save()">
+                    <input type="radio" name="tr" id="a" value="Wagen" onchange="save()">
                     <label for="a">🚗</label>
                 </div>
             </div>
@@ -133,20 +121,19 @@
 
     <div id="klantenLijst"></div>
 
-    <button class="btn btn-add" style="width: 100%;" onclick="voegKlantToe()">+ NIEUWE KLANT</button>
+    <button class="btn btn-main" onclick="voegKlantToe()">+ NIEUWE KLANT TOEVOEGEN</button>
 </div>
 
 <div class="footer-stats">
     <div class="total-box">
-        <span>DAG TOTAAL</span>
+        <span style="font-size: 0.65rem; font-weight: 800; color: #64748b; text-transform: uppercase;">Uren Totaal</span>
         <div id="dagTotaal">0.00</div>
     </div>
-    <button class="btn btn-done" onclick="window.print()">EXPORT PDF</button>
+    <button class="btn" style="background: #1e293b; color: white; padding: 12px 25px;" onclick="prepPrint()">📄 AFDRUKKEN</button>
 </div>
 
 <script>
     const TYPES = ["Raam kader", "Raam vleugel", "Deur kader", "Deur vleugel", "Schuifraam kader", "Schuifraam vleugel", "T-profiel", "Glaslatten", "Beslag", "Opkuisen", "Montage", "Andere"];
-    let timerIdx = null;
     let timerInt = null;
 
     function save() {
@@ -157,26 +144,27 @@
                 n: c.querySelector('.in-n').value,
                 d: c.querySelector('.in-d').value,
                 cl: c.classList.contains('collapsed'),
+                st: c.dataset.status || '',
                 rows: [...c.querySelectorAll('.prod-row')].map(r => ({
                     t: r.querySelector('.sel-t').value,
                     s: r.dataset.sec,
                     u: r.querySelector('.in-u').value,
-                    o: r.querySelector('.in-o').value,
-                    st: r.dataset.status
+                    o: r.querySelector('.in-o').value
                 }))
             }))
         };
-        localStorage.setItem('prod_v3_' + document.getElementById('datum').value, JSON.stringify(data));
+        localStorage.setItem('prod_v6_' + document.getElementById('datum').value, JSON.stringify(data));
         calc();
     }
 
     function load() {
         document.getElementById('klantenLijst').innerHTML = '';
-        const raw = localStorage.getItem('prod_v3_' + document.getElementById('datum').value);
+        const raw = localStorage.getItem('prod_v6_' + document.getElementById('datum').value);
         if (raw) {
             const data = JSON.parse(raw);
-            document.getElementById('operator').value = data.op;
-            document.getElementById(data.tr === 'Fiets' ? 'f' : 'a').checked = true;
+            document.getElementById('operator').value = data.op || '';
+            const trVal = data.tr || 'Fiets';
+            document.getElementById(trVal === 'Fiets' ? 'f' : 'a').checked = true;
             data.klanten.forEach(k => voegKlantToe(k));
         } else {
             voegKlantToe();
@@ -186,8 +174,9 @@
 
     function voegKlantToe(data = null) {
         const id = 'k' + Math.random().toString(36).substr(2,5);
+        const statusClass = data?.st ? 'status-' + data.st : '';
         const html = `
-            <div class="card ${data?.cl ? 'collapsed' : ''}" id="${id}">
+            <div class="card ${data?.cl ? 'collapsed' : ''} ${statusClass}" id="${id}" data-status="${data?.st || ''}">
                 <div class="card-header" onclick="toggle('${id}')">
                     <div class="header-main">
                         <span class="client-title">${data?.n || 'Nieuwe Klant'}</span>
@@ -195,17 +184,20 @@
                     </div>
                     <div style="text-align:right">
                         <div style="font-weight:900; color:var(--primary)"><span class="k-uur">0.00</span>u</div>
-                        <div style="font-size:0.6rem; color:#94a3b8">TIJK</div>
                     </div>
                 </div>
                 <div class="card-body">
-                    <label>Klantnaam</label>
-                    <input type="text" class="in-n" value="${data?.n || ''}" oninput="sync('${id}')" style="margin-bottom:10px">
-                    <label>Dossiernummer</label>
-                    <input type="text" class="in-d" value="${data?.d || ''}" oninput="sync('${id}')" style="margin-bottom:15px">
+                    <div class="header-grid" style="margin-bottom:12px">
+                        <div><label>Klantnaam</label><input type="text" class="in-n" value="${data?.n || ''}" oninput="sync('${id}')"></div>
+                        <div><label>Dossiernr</label><input type="text" class="in-d" value="${data?.d || ''}" oninput="sync('${id}')"></div>
+                    </div>
                     <div class="rijen"></div>
-                    <button class="btn btn-action" style="width:100%" onclick="voegRij('${id}')">+ RIJ TOEVOEGEN</button>
-                    <button onclick="del('${id}')" style="width:100%; background:none; border:none; color:var(--danger); margin-top:15px; font-size:0.8rem; font-weight:700">KLANT VERWIJDEREN</button>
+                    <button class="btn btn-add-row" onclick="voegRij('${id}')">+ RIJ TOEVOEGEN</button>
+                    <div style="display:flex; gap:8px">
+                        <button class="btn btn-status-v" onclick="setStat('${id}', 'done')">VOLTOOID</button>
+                        <button class="btn btn-status-x" onclick="setStat('${id}', 'pending')">NIET VOLTOOID</button>
+                    </div>
+                    <button style="background:none; border:none; color:#94a3b8; font-size:0.7rem; width:100%; margin-top:15px; cursor:pointer;" onclick="del('${id}')">VERWIJDER KLANT</button>
                 </div>
             </div>`;
         document.getElementById('klantenLijst').insertAdjacentHTML('beforeend', html);
@@ -215,25 +207,17 @@
     function voegRij(kid, r = null) {
         const rid = 'r' + Math.random().toString(36).substr(2,5);
         const html = `
-            <div class="prod-row" id="${rid}" data-sec="${r?.s || 0}" data-status="${r?.st || ''}">
+            <div class="prod-row" id="${rid}" data-sec="${r?.s || 0}">
                 <div class="timer-display">${fmt(r?.s || 0)}</div>
-                <div class="row-grid">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-bottom:8px;" class="btn-grid">
                     <button class="btn btn-start" onclick="tglT('${rid}', true)">START</button>
                     <button class="btn btn-stop" onclick="tglT('${rid}', false)">STOP</button>
                 </div>
-                <div class="row-grid">
-                    <div>
-                        <label>Type</label>
-                        <select class="sel-t" onchange="save()">
-                            ${TYPES.map(t => `<option ${r?.t === t ? 'selected' : ''}>${t}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div>
-                        <label>Uren</label>
-                        <input type="number" class="in-u" value="${r?.u || '0.00'}" step="0.25" oninput="save()">
-                    </div>
+                <div class="header-grid" style="margin-bottom:8px">
+                    <select class="sel-t" onchange="save()">${TYPES.map(t => `<option ${r?.t === t ? 'selected' : ''}>${t}</option>`).join('')}</select>
+                    <input type="number" class="in-u" value="${r?.u || '0.00'}" step="0.25" oninput="save()" placeholder="0.00">
                 </div>
-                <textarea class="in-o" placeholder="Opmerking..." oninput="save()">${r?.o || ''}</textarea>
+                <textarea class="in-o" placeholder="Opmerking..." oninput="save()" rows="1">${r?.o || ''}</textarea>
             </div>`;
         document.getElementById(kid).querySelector('.rijen').insertAdjacentHTML('beforeend', html);
     }
@@ -242,7 +226,6 @@
         const el = document.getElementById(rid);
         clearInterval(timerInt);
         document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-        
         if (start) {
             el.closest('.card').classList.add('active');
             timerInt = setInterval(() => {
@@ -254,6 +237,14 @@
             el.querySelector('.in-u').value = h;
             save();
         }
+    }
+
+    function setStat(id, stat) {
+        const el = document.getElementById(id);
+        el.dataset.status = stat;
+        el.classList.remove('status-done', 'status-pending');
+        el.classList.add('status-' + stat);
+        save();
     }
 
     function fmt(s) {
@@ -269,7 +260,7 @@
     }
 
     function toggle(id) {
-        if(event.target.closest('input') || event.target.closest('button')) return;
+        if(event.target.closest('input') || event.target.closest('button') || event.target.closest('select') || event.target.closest('textarea')) return;
         document.getElementById(id).classList.toggle('collapsed');
         save();
     }
@@ -285,6 +276,19 @@
             dag += kt;
         });
         document.getElementById('dagTotaal').innerText = dag.toFixed(2);
+    }
+
+    function prepPrint() {
+        const op = document.getElementById('operator').value || 'Onbekend';
+        const dat = document.getElementById('datum').value;
+        const vRaw = document.querySelector('input[name="tr"]:checked').value;
+        // Vervoer vertaling naar tekst voor print
+        const vText = vRaw === 'Fiets' ? 'Fiets' : 'Wagen';
+        
+        document.getElementById('printMeta').innerHTML = `
+            Operator: ${op} &nbsp; | &nbsp; Datum: ${dat} &nbsp; | &nbsp; Vervoer: ${vText}
+        `;
+        window.print();
     }
 
     window.onload = () => {

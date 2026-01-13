@@ -5,43 +5,61 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Productie Registratie</title>
 <style>
-/* === ORIGINELE CSS – ONGEWIJZIGD === */
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f2f4f7}
 .app{padding:12px}
 h1{text-align:center;font-size:1.6rem;margin:12px 0 20px}
+
 input, select, textarea{
   padding:12px;font-size:1rem;border-radius:10px;border:1px solid #ccc;
-  margin-bottom:12px;display:block;width:100%;font-family: Arial, sans-serif;
-  transition: all 0.3s ease;
+  margin-bottom:12px;display:block;width:100%;
 }
-input:focus, select:focus, textarea:focus{
-  border-color:#3498db;box-shadow:0 0 8px rgba(52,152,219,.2);outline:none;
-}
-textarea{resize: vertical;box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);}
+
+textarea{resize:vertical}
 .controls{display:flex;gap:10px;margin-bottom:16px;justify-content:center;flex-wrap:wrap}
-button{padding:12px;border-radius:10px;border:none;cursor:pointer;font-size:1rem;
-  transition:all .3s ease;box-shadow:0 2px 6px rgba(0,0,0,.1);}
-button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.15);}
-button:active{transform:translateY(0) scale(0.97);}
-.add{background:#2ecc71;color:#fff}.remove{background:#e74c3c;color:#fff}
-.done{background:#27ae60;color:#fff}.notdone{background:#c0392b;color:#fff}
+
+button{
+  padding:12px;border-radius:10px;border:none;cursor:pointer;font-size:1rem
+}
+.add{background:#2ecc71;color:#fff}
+.remove{background:#e74c3c;color:#fff}
+.done{background:#27ae60;color:#fff}
+.notdone{background:#c0392b;color:#fff}
 .delete-klant{background:#555;color:#fff}
 .timer-start{background:#3498db;color:#fff}
 .timer-stop{background:#7f8c8d;color:#fff}
 
-.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:0 4px 10px rgba(0,0,0,.08);overflow:hidden;border-left:8px solid #ccc;transition:all .35s ease}
+.card{
+  background:#fff;border-radius:16px;padding:14px;margin-bottom:16px;
+}
+.card-header{
+  display:flex;justify-content:space-between;align-items:center;
+  background:#f7f9fc;padding:12px;border-radius:12px;cursor:pointer
+}
+.badge{padding:4px 10px;border-radius:12px;color:#fff;font-size:.85rem}
+.badge.done{background:#27ae60}
+.badge.notdone{background:#c0392b}
+.badge.progress{background:#f39c12}
+
+.card-body{margin-top:12px}
+.grid{display:flex;gap:12px;flex-wrap:wrap}
+
+.productie-row{
+  border:2px solid #ddd;padding:12px;border-radius:12px;margin-bottom:12px;
+  display:flex;flex-wrap:wrap;gap:10px;
+}
+.productie-row>div{flex:1;min-width:140px}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
 
 .timer-display{
-  font-weight:bold;
-  text-align:center;
-  padding:4px;
-  background:#eef3f7;
-  border-radius:6px;
+  font-weight:bold;text-align:center;padding:6px;
+  background:#eef3f7;border-radius:8px;
 }
 
 @media print{
-  .timer-display,.timer-start,.timer-stop{display:none!important}
+  .controls,button,.timer-display,.timer-start,.timer-stop{display:none!important}
+  body{background:#fff}
+  .print-info{display:block;font-weight:bold;margin-bottom:6mm}
 }
 </style>
 </head>
@@ -50,25 +68,44 @@ button:active{transform:translateY(0) scale(0.97);}
 <div class="app">
 <h1>Productie Registratie</h1>
 
+<div class="grid">
+  <div>
+    <label>Naam operator</label>
+    <input id="operatorNaam">
+  </div>
+  <div>
+    <label>Vervoer</label>
+    <select id="vervoerSelect">
+      <option>Fiets</option>
+      <option>Auto</option>
+    </select>
+  </div>
+</div>
+
 <input type="date" id="datum">
+
+<div class="controls">
+  <button onclick="voegPrintInfoToe();window.print()">Print / PDF</button>
+</div>
+
 <div id="productieCards"></div>
 <button class="add" onclick="nieuweKlant()">Nieuwe klant</button>
+
 <h3>Dag totaal: <span id="dagTotaal">0.00</span></h3>
 </div>
 
 <script>
-/* === ORIGINELE JS – ONGEWIJZIGD TOT AAN TOEVOEGINGEN === */
-
 const types=["Raam kader","Raam vleugel","Deur kader","Deur vleugel","Andere"];
 const productieCards=document.getElementById("productieCards");
 const dagTotaal=document.getElementById("dagTotaal");
 const datum=document.getElementById("datum");
+const operatorNaam=document.getElementById("operatorNaam");
+const vervoerSelect=document.getElementById("vervoerSelect");
 
-function key(){ return "productie-"+datum.value; }
+let actieveTimer=null;
 
-/* =======================
-   TIMER TOEVOEGING START
-======================= */
+function key(){return "productie-"+datum.value;}
+
 function formatTimer(sec){
   const h=String(Math.floor(sec/3600)).padStart(2,'0');
   const m=String(Math.floor((sec%3600)/60)).padStart(2,'0');
@@ -76,68 +113,77 @@ function formatTimer(sec){
   return `${h}:${m}:${s}`;
 }
 
-function rond15min(sec){
+function rond15(sec){
   const min=Math.round((sec/60)/15)*15;
   return (min/60).toFixed(2);
 }
-/* =======================
-   TIMER TOEVOEGING EINDE
-======================= */
 
 function editRijHTML(r={}){
   const sec=r.seconden||0;
   return `
 <div class="productie-row" data-seconden="${sec}" data-running="false">
-<div><label>Type</label><select>${types.map(t=>`<option ${r.type===t?"selected":""}>${t}</option>`).join("")}</select></div>
+  <div><label>Type</label>
+    <select>${types.map(t=>`<option ${r.type===t?"selected":""}>${t}</option>`).join("")}</select>
+  </div>
 
-<!-- TIMER TOEVOEGING -->
-<div>
-  <label>Timer</label>
-  <div class="timer-display">${formatTimer(sec)}</div>
-</div>
+  <div>
+    <label>Timer</label>
+    <div class="timer-display">${formatTimer(sec)}</div>
+  </div>
 
-<div><label>Uren</label><input type="number" step="0.01" class="uren-input" value="${r.uren||0}"></div>
-<div class="actions">
-<button class="timer-start">Start</button>
-<button class="timer-stop">Stop</button>
-<button class="remove">X</button>
-</div></div>`;
+  <div><label>Uren</label>
+    <input class="uren-input" type="number" step="0.01" value="${r.uren||0}">
+  </div>
+
+  <div class="actions">
+    <button class="timer-start">Start</button>
+    <button class="timer-stop">Stop</button>
+    <button class="done">Voltooid</button>
+    <button class="notdone">Niet voltooid</button>
+    <button class="remove">X</button>
+  </div>
+</div>`;
 }
 
 function nieuweKlant(data=null){
-  const card=document.createElement("div");
-  card.className="card";
-  card.innerHTML=`
-    <input placeholder="Klant" value="${data?.klant||""}">
-    <input placeholder="Dossier" value="${data?.dossier||""}">
+  const c=document.createElement("div");
+  c.className="card";
+  c.innerHTML=`
+  <div class="card-header">
+    <div>
+      <div class="klant-naam">${data?.klant||"—"}</div>
+      <div class="dossier-nr">${data?.dossier||"—"}</div>
+      <span class="badge progress">…</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="grid">
+      <input placeholder="Klant" value="${data?.klant||""}">
+      <input placeholder="Dossier" value="${data?.dossier||""}">
+    </div>
     ${(data?.rijen||[{}]).map(editRijHTML).join("")}
     <button class="add">Rij toevoegen</button>
-  `;
-  productieCards.appendChild(card);
-  bind(card);
+    <button class="delete-klant">Klant verwijderen</button>
+  </div>`;
+  productieCards.appendChild(c);
+  bind(c);
   bereken();
 }
 
 function bind(card){
-  card.querySelectorAll(".timer-start").forEach(b=>{
-    b.onclick=()=>startTimer(b.closest(".productie-row"));
-  });
-  card.querySelectorAll(".timer-stop").forEach(b=>{
-    b.onclick=()=>stopTimer(b.closest(".productie-row"));
-  });
-  card.querySelectorAll(".remove").forEach(b=>{
-    b.onclick=()=>{b.closest(".productie-row").remove();opslaan();}
-  });
-  card.querySelector(".add").onclick=()=>{
-    card.querySelector(".add").insertAdjacentHTML("beforebegin",editRijHTML());
-    bind(card);
-  };
+  card.querySelectorAll(".timer-start").forEach(b=>b.onclick=()=>startTimer(b.closest(".productie-row")));
+  card.querySelectorAll(".timer-stop").forEach(b=>b.onclick=()=>stopTimer(b.closest(".productie-row")));
+  card.querySelectorAll(".remove").forEach(b=>b.onclick=()=>{b.closest(".productie-row").remove();opslaan();});
+  card.querySelectorAll(".add").forEach(b=>b.onclick=()=>{b.insertAdjacentHTML("beforebegin",editRijHTML());bind(card);});
+  card.querySelectorAll(".delete-klant").forEach(b=>b.onclick=()=>{if(confirm("Klant verwijderen?")){card.remove();opslaan();}});
 }
 
 function startTimer(row){
-  if(row.dataset.running==="true") return;
+  if(actieveTimer) stopTimer(actieveTimer);
+  if(row.dataset.running==="true")return;
   row.dataset.running="true";
   row.dataset.start=Date.now();
+  actieveTimer=row;
   row.interval=setInterval(()=>{
     const sec=Number(row.dataset.seconden)+(Date.now()-row.dataset.start)/1000;
     row.querySelector(".timer-display").textContent=formatTimer(sec);
@@ -145,46 +191,65 @@ function startTimer(row){
 }
 
 function stopTimer(row){
-  if(row.dataset.running!=="true") return;
+  if(row.dataset.running!=="true")return;
   clearInterval(row.interval);
   const sec=Number(row.dataset.seconden)+(Date.now()-row.dataset.start)/1000;
   row.dataset.seconden=sec;
   row.dataset.running="false";
-  row.querySelector(".uren-input").value=rond15min(sec);
+  row.querySelector(".uren-input").value=rond15(sec);
   row.querySelector(".timer-display").textContent=formatTimer(sec);
+  actieveTimer=null;
   opslaan();
 }
 
 function bereken(){
-  let totaal=0;
-  document.querySelectorAll(".uren-input").forEach(i=>totaal+=+i.value||0);
-  dagTotaal.textContent=totaal.toFixed(2);
+  let t=0;
+  document.querySelectorAll(".uren-input").forEach(i=>t+=+i.value||0);
+  dagTotaal.textContent=t.toFixed(2);
 }
 
 function opslaan(){
   bereken();
-  const data=[...document.querySelectorAll(".card")].map(c=>({
-    klant:c.querySelectorAll("input")[0].value,
-    dossier:c.querySelectorAll("input")[1].value,
-    rijen:[...c.querySelectorAll(".productie-row")].map(r=>({
-      type:r.querySelector("select").value,
-      uren:r.querySelector(".uren-input").value,
-      seconden:r.dataset.seconden
+  const data={
+    operator:operatorNaam.value,
+    vervoer:vervoerSelect.value,
+    klanten:[...document.querySelectorAll(".card")].map(c=>({
+      klant:c.querySelectorAll("input")[0].value,
+      dossier:c.querySelectorAll("input")[1].value,
+      rijen:[...c.querySelectorAll(".productie-row")].map(r=>({
+        type:r.querySelector("select").value,
+        uren:r.querySelector(".uren-input").value,
+        seconden:r.dataset.seconden
+      }))
     }))
-  }));
+  };
   localStorage.setItem(key(),JSON.stringify(data));
 }
 
 function laadDag(){
   productieCards.innerHTML="";
-  const data=JSON.parse(localStorage.getItem(key())||"null");
-  if(!data){nieuweKlant();return;}
-  data.forEach(nieuweKlant);
+  const d=JSON.parse(localStorage.getItem(key())||"null");
+  if(!d){nieuweKlant();return;}
+  operatorNaam.value=d.operator||"";
+  vervoerSelect.value=d.vervoer||"";
+  d.klanten.forEach(nieuweKlant);
   bereken();
+}
+
+function voegPrintInfoToe(){
+  let p=document.querySelector(".print-info");
+  if(!p){
+    p=document.createElement("div");
+    p.className="print-info";
+    document.body.prepend(p);
+  }
+  p.textContent=`Operator: ${operatorNaam.value} | Vervoer: ${vervoerSelect.value}`;
 }
 
 datum.value=new Date().toISOString().split("T")[0];
 datum.onchange=laadDag;
+operatorNaam.oninput=opslaan;
+vervoerSelect.onchange=opslaan;
 laadDag();
 </script>
 </body>

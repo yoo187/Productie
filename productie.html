@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Productie App Pro v8</title>
+    <title>Productie App Pro v8.1</title>
     <style>
         :root {
             --primary: #2563eb; --success: #16a34a; --danger: #dc2626; --warning: #ca8a04;
@@ -14,7 +14,6 @@
         body { background: var(--bg); color: #1e293b; padding: 10px; padding-bottom: 90px; }
         .container { max-width: 800px; margin: 0 auto; }
 
-        /* UI Elementen (Verdwijnen bij print) */
         .search-container { background: #fff; padding: 15px; border-radius: var(--radius); margin-bottom: 12px; border: 2px solid var(--primary); }
         .app-header { background: #1e293b; color: white; padding: 15px; border-radius: var(--radius); margin-bottom: 12px; }
         .header-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -22,17 +21,15 @@
         
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; background: #fff; }
 
-        /* Vervoer Icoontjes App */
         .transport-toggle { display: flex; background: #334155; padding: 3px; border-radius: 8px; }
         .transport-toggle input { display: none; }
         .transport-toggle label { flex: 1; text-align: center; padding: 6px; cursor: pointer; border-radius: 6px; font-size: 1.2rem; }
         .transport-toggle input:checked + label { background: var(--primary); color: white; }
 
-        /* Kaarten App */
         .card { background: var(--card); border-radius: var(--radius); margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; border-left: 8px solid #cbd5e1; }
         .card.status-done { border-left-color: var(--success); }
         .card.status-pending { border-left-color: var(--danger); }
-        .card.active { border-left-color: var(--warning); background: #fffbeb; }
+        .card.active-timer { border-left-color: var(--warning); background: #fffbeb; }
         .card-header { padding: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .card.collapsed .card-body { display: none; }
         .card-body { padding: 12px; border-top: 1px solid #f1f5f9; }
@@ -46,40 +43,20 @@
 
         .footer-stats { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e2e8f0; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
 
-        /* --- PRINT LOGICA: COMPACT & OVERZICHTELIJK --- */
-        #print-report { display: none; }
-
         @media print {
-            body { background: white; padding: 0; }
             .container, .footer-stats, .search-container, .app-header { display: none !important; }
-            #print-report { display: block !important; padding: 10px; }
-            
-            .p-header { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: flex-end; }
-            .p-header h1 { font-size: 18pt; text-transform: uppercase; }
-            .p-meta { font-size: 10pt; text-align: right; }
-
-            .p-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; }
-            .p-table th { background: #f1f5f9; text-align: left; padding: 6px; font-size: 9pt; border: 1px solid #cbd5e1; }
-            .p-table td { padding: 6px; font-size: 9pt; border: 1px solid #cbd5e1; vertical-align: top; overflow: hidden; }
-            
-            .p-client-row { background: #f8fafc; font-weight: bold; }
-            .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
-            .dot-done { background: var(--success); }
-            .dot-pending { background: var(--danger); }
-            
-            .total-row { font-weight: bold; background: #eee; }
+            #print-report { display: block !important; }
         }
     </style>
 </head>
 <body>
 
-<div id="print-report">
-    <div class="p-header">
+<div id="print-report" style="display:none">
+    <div style="border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: flex-end;">
         <h1>Productieverslag</h1>
-        <div class="p-meta" id="p-meta-info"></div>
+        <div id="p-meta-info" style="text-align:right"></div>
     </div>
-    <table class="p-table" id="p-table-body">
-        </table>
+    <table id="p-table-body" style="width:100%; border-collapse: collapse;"></table>
 </div>
 
 <div class="container">
@@ -125,22 +102,27 @@
 
 <script>
     const TYPES = ["Raam kader", "Raam vleugel", "Deur kader", "Deur vleugel", "Schuifraam kader", "Schuifraam vleugel", "T-profiel", "Glaslatten", "Beslag", "Opkuisen", "Montage", "Andere"];
-    let timerInt = null;
+    let activeTimerId = null;
+    let timerInterval = null;
 
     function save() {
         const date = document.getElementById('datum').value;
         const data = {
             op: document.getElementById('operator').value,
             tr: document.querySelector('input[name="tr"]:checked').value,
+            activeTimerId: activeTimerId,
             klanten: [...document.querySelectorAll('.card')].map(c => ({
+                id: c.id,
                 n: c.querySelector('.in-n').value,
                 d: c.querySelector('.in-d').value,
                 st: c.dataset.status || '',
                 rows: [...c.querySelectorAll('.prod-row')].map(r => ({
+                    id: r.id,
                     t: r.querySelector('.sel-t').value,
                     u: r.querySelector('.in-u').value,
                     o: r.querySelector('.in-o').value,
-                    s: r.dataset.sec
+                    s: parseInt(r.dataset.sec) || 0,
+                    start: r.dataset.start || null
                 }))
             }))
         };
@@ -149,19 +131,25 @@
     }
 
     function load() {
+        clearInterval(timerInterval);
         document.getElementById('klantenLijst').innerHTML = '';
         const raw = localStorage.getItem('prod_v8_' + document.getElementById('datum').value);
         if (raw) {
             const data = JSON.parse(raw);
             document.getElementById('operator').value = data.op || '';
             document.getElementById(data.tr === 'Fiets' ? 'f' : 'a').checked = true;
+            activeTimerId = data.activeTimerId || null;
             data.klanten.forEach(k => voegKlantToe(k));
-        } else { voegKlantToe(); }
+            if(activeTimerId) startTick();
+        } else { 
+            activeTimerId = null;
+            voegKlantToe(); 
+        }
         calc();
     }
 
     function voegKlantToe(data = null) {
-        const id = 'k' + Math.random().toString(36).substr(2,5);
+        const id = data?.id || 'k' + Math.random().toString(36).substr(2,5);
         const html = `
             <div class="card ${data?.st ? 'status-'+data.st : ''}" id="${id}" data-status="${data?.st || ''}">
                 <div class="card-header" onclick="toggle('${id}')">
@@ -190,13 +178,13 @@
     }
 
     function voegRij(kid, r = null) {
-        const rid = 'r' + Math.random().toString(36).substr(2,5);
+        const rid = r?.id || 'r' + Math.random().toString(36).substr(2,5);
         const html = `
-            <div class="prod-row" id="${rid}" data-sec="${r?.s || 0}">
+            <div class="prod-row" id="${rid}" data-sec="${r?.s || 0}" data-start="${r?.start || ''}">
                 <button class="btn-row-del" onclick="delR('${rid}')">×</button>
                 <div class="timer-display">${fmt(r?.s || 0)}</div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-bottom:5px">
-                    <button class="btn" style="background:var(--warning); color:white; padding:8px" onclick="tglT('${rid}', true)">START</button>
+                    <button class="btn btn-start" style="background:var(--warning); color:white; padding:8px" onclick="tglT('${rid}', true)">START</button>
                     <button class="btn" style="background:#64748b; color:white; padding:8px" onclick="tglT('${rid}', false)">STOP</button>
                 </div>
                 <div class="header-grid">
@@ -206,46 +194,86 @@
                 <textarea class="in-o" placeholder="Opmerking..." oninput="save()" rows="1" style="margin-top:5px; font-size:14px">${r?.o || ''}</textarea>
             </div>`;
         document.getElementById(kid).querySelector('.rijen').insertAdjacentHTML('beforeend', html);
+    }
+
+    function tglT(rid, start) {
+        const el = document.getElementById(rid);
+        if(start) {
+            if(activeTimerId) tglT(activeTimerId, false); // Stop vorige
+            activeTimerId = rid;
+            el.dataset.start = Date.now();
+            el.closest('.card').classList.add('active-timer');
+            startTick();
+        } else {
+            if(activeTimerId === rid) {
+                const elapsed = Math.floor((Date.now() - parseInt(el.dataset.start)) / 1000);
+                el.dataset.sec = (parseInt(el.dataset.sec) || 0) + elapsed;
+                el.dataset.start = '';
+                activeTimerId = null;
+                clearInterval(timerInterval);
+                // Bereken uren (afronden op kwartier)
+                el.querySelector('.in-u').value = (Math.round((parseInt(el.dataset.sec)/3600)*4)/4).toFixed(2);
+                el.closest('.card').classList.remove('active-timer');
+            }
+        }
         save();
     }
 
-    function prepPrint() {
-        const op = document.getElementById('operator').value || '...';
-        const dat = document.getElementById('datum').value;
-        const vText = document.querySelector('input[name="tr"]:checked').value;
-        
-        document.getElementById('p-meta-info').innerHTML = `
-            Operator: <strong>${op}</strong><br>
-            Datum: <strong>${dat}</strong><br>
-            Vervoer: <strong>${vText}</strong>
-        `;
-
-        let tableHtml = `<tr><th style="width:25%">Klant / Dossier</th><th style="width:20%">Type Werk</th><th style="width:10%">Uren</th><th>Opmerkingen</th></tr>`;
-        
-        document.querySelectorAll('.card').forEach(c => {
-            const n = c.querySelector('.in-n').value;
-            const d = c.querySelector('.in-d').value;
-            const status = c.dataset.status;
-            const dot = status ? `<span class="status-dot dot-${status}"></span>` : '';
-            
-            const rows = c.querySelectorAll('.prod-row');
-            rows.forEach((r, idx) => {
-                tableHtml += `
-                    <tr>
-                        ${idx === 0 ? `<td rowspan="${rows.length}">${dot}<strong>${n}</strong><br><small>Dossier: ${d}</small></td>` : ''}
-                        <td>${r.querySelector('.sel-t').value}</td>
-                        <td>${r.querySelector('.in-u').value}u</td>
-                        <td>${r.querySelector('.in-o').value}</td>
-                    </tr>`;
-            });
-        });
-
-        tableHtml += `<tr class="total-row"><td colspan="2" style="text-align:right">DAG TOTAAL:</td><td colspan="2">${document.getElementById('dagTotaal').innerText} u</td></tr>`;
-        document.getElementById('p-table-body').innerHTML = tableHtml;
-        window.print();
+    function startTick() {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if(!activeTimerId) return;
+            const el = document.getElementById(activeTimerId);
+            const currentElapsed = Math.floor((Date.now() - parseInt(el.dataset.start)) / 1000);
+            const totalSec = (parseInt(el.dataset.sec) || 0) + currentElapsed;
+            el.querySelector('.timer-display').innerText = fmt(totalSec);
+        }, 1000);
     }
 
-    // --- HELPERS ---
+    function fmt(s) {
+        const h = Math.floor(s / 3600);
+        const m = Math.floor((s % 3600) / 60);
+        const sec = s % 60;
+        return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+    }
+
+    function calc() {
+        let dagTotaal = 0;
+        document.querySelectorAll('.card').forEach(card => {
+            let klantTotaal = 0;
+            card.querySelectorAll('.in-u').forEach(input => {
+                klantTotaal += parseFloat(input.value) || 0;
+            });
+            card.querySelector('.k-uur').innerText = klantTotaal.toFixed(2);
+            dagTotaal += klantTotaal;
+        });
+        document.getElementById('dagTotaal').innerText = dagTotaal.toFixed(2);
+    }
+
+    function sync(id) {
+        const c = document.getElementById(id);
+        c.querySelector('span:first-child').innerText = c.querySelector('.in-n').value || 'Nieuwe Klant';
+        c.querySelector('span:nth-child(2)').innerText = 'Dossier: ' + c.querySelector('.in-d').value;
+        save();
+    }
+
+    function toggle(id) {
+        if(!event.target.closest('input, button, select, textarea')) {
+            document.getElementById(id).classList.toggle('collapsed');
+        }
+    }
+
+    function setStat(id, s) {
+        const el = document.getElementById(id);
+        el.dataset.status = s;
+        el.classList.remove('status-done', 'status-pending');
+        if(s) el.classList.add('status-'+s);
+        save();
+    }
+
+    function delR(rid) { if(confirm("Rij wissen?")) { document.getElementById(rid).remove(); save(); } }
+    function delK(id) { if(confirm("Klant wissen?")) { document.getElementById(id).remove(); save(); } }
+
     function searchArchive() {
         const q = document.getElementById('globalSearch').value.toLowerCase();
         const res = document.getElementById('searchResults');
@@ -264,20 +292,36 @@
     }
 
     function goToDate(d) { document.getElementById('datum').value = d; load(); document.getElementById('searchResults').innerHTML = ''; }
-    function delR(rid) { if(confirm("Rij wissen?")) { document.getElementById(rid).remove(); save(); } }
-    function delK(id) { if(confirm("Klant wissen?")) { document.getElementById(id).remove(); save(); } }
-    function tglT(rid, s) { 
-        const el = document.getElementById(rid); clearInterval(timerInt); 
-        if(s) timerInt = setInterval(() => { el.dataset.sec = parseInt(el.dataset.sec)+1; el.querySelector('.timer-display').innerText = fmt(el.dataset.sec); }, 1000);
-        else { el.querySelector('.in-u').value = (Math.round((parseInt(el.dataset.sec)/60)/15)*0.25).toFixed(2); save(); }
-    }
-    function fmt(s) { return new Date(s * 1000).toISOString().substr(11, 8); }
-    function sync(id) { const c = document.getElementById(id); c.querySelector('span:first-child').innerText = c.querySelector('.in-n').value || 'Klant'; c.querySelector('span:nth-child(2)').innerText = 'Dossier: ' + c.querySelector('.in-d').value; save(); }
-    function toggle(id) { if(!event.target.closest('input, button, select, textarea')) document.getElementById(id).classList.toggle('collapsed'); }
-    function setStat(id, s) { const el = document.getElementById(id); el.dataset.status = s; el.classList.remove('status-done', 'status-pending'); el.classList.add('status-'+s); save(); }
-    function calc() { let t = 0; document.querySelectorAll('.in-u').forEach(i => t += parseFloat(i.value) || 0); document.getElementById('dagTotaal').innerText = t.toFixed(2); }
 
-    window.onload = () => { document.getElementById('datum').value = new Date().toISOString().split('T')[0]; load(); };
+    function prepPrint() {
+        const op = document.getElementById('operator').value || '...';
+        const dat = document.getElementById('datum').value;
+        const vText = document.querySelector('input[name="tr"]:checked').value;
+        document.getElementById('p-meta-info').innerHTML = `Operator: ${op}<br>Datum: ${dat}<br>Vervoer: ${vText}`;
+        let tableHtml = `<tr><th style="border:1px solid #000;padding:5px">Klant/Dossier</th><th style="border:1px solid #000;padding:5px">Type</th><th style="border:1px solid #000;padding:5px">Uren</th><th style="border:1px solid #000;padding:5px">Opmerking</th></tr>`;
+        document.querySelectorAll('.card').forEach(c => {
+            const n = c.querySelector('.in-n').value;
+            const d = c.querySelector('.in-d').value;
+            const rows = c.querySelectorAll('.prod-row');
+            rows.forEach((r, idx) => {
+                tableHtml += `<tr>
+                    ${idx === 0 ? `<td rowspan="${rows.length}" style="border:1px solid #000;padding:5px"><strong>${n}</strong><br>${d}</td>` : ''}
+                    <td style="border:1px solid #000;padding:5px">${r.querySelector('.sel-t').value}</td>
+                    <td style="border:1px solid #000;padding:5px">${r.querySelector('.in-u').value}u</td>
+                    <td style="border:1px solid #000;padding:5px">${r.querySelector('.in-o').value}</td>
+                </tr>`;
+            });
+        });
+        document.getElementById('p-table-body').innerHTML = tableHtml;
+        window.print();
+    }
+
+    window.onload = () => { 
+        if(!document.getElementById('datum').value) {
+            document.getElementById('datum').value = new Date().toISOString().split('T')[0];
+        }
+        load(); 
+    };
 </script>
 
 </body>

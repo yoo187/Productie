@@ -3,326 +3,337 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Productie App Pro v8.1</title>
+    <title>Urenregistratie V35 - Status Glow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2563eb; --success: #16a34a; --danger: #dc2626; --warning: #ca8a04;
-            --bg: #f8fafc; --card: #ffffff; --radius: 12px;
+            --cyber-blauw: #00f0ff;
+            --cyber-paars: #6e00ff;
+            --cyber-rood: #ff003c;
+            --cyber-groen: #00ff66;
+            --bg: #050608;
+            --paneel-bg: rgba(20, 25, 35, 0.7);
+            --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
-        body { background: var(--bg); color: #1e293b; padding: 10px; padding-bottom: 90px; }
-        .container { max-width: 800px; margin: 0 auto; }
-
-        .search-container { background: #fff; padding: 15px; border-radius: var(--radius); margin-bottom: 12px; border: 2px solid var(--primary); }
-        .app-header { background: #1e293b; color: white; padding: 15px; border-radius: var(--radius); margin-bottom: 12px; }
-        .header-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        label { display: block; font-size: 0.7rem; font-weight: 700; color: #94a3b8; margin-bottom: 3px; text-transform: uppercase; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; background: #fff; }
+        body { 
+            background: var(--bg); color: #fff; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-image: 
+                radial-gradient(circle at 50% 10%, rgba(110, 0, 255, 0.15) 0%, transparent 50%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+            min-height: 100vh; padding-bottom: 120px;
+        }
 
-        .transport-toggle { display: flex; background: #334155; padding: 3px; border-radius: 8px; }
-        .transport-toggle input { display: none; }
-        .transport-toggle label { flex: 1; text-align: center; padding: 6px; cursor: pointer; border-radius: 6px; font-size: 1.2rem; }
-        .transport-toggle input:checked + label { background: var(--primary); color: white; }
+        h1, h2, .timer-display, .btn-cyber { font-family: 'Orbitron', sans-serif; }
 
-        .card { background: var(--card); border-radius: var(--radius); margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; border-left: 8px solid #cbd5e1; }
-        .card.status-done { border-left-color: var(--success); }
-        .card.status-pending { border-left-color: var(--danger); }
-        .card.active-timer { border-left-color: var(--warning); background: #fffbeb; }
-        .card-header { padding: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .card.collapsed .card-body { display: none; }
-        .card-body { padding: 12px; border-top: 1px solid #f1f5f9; }
+        header {
+            background: rgba(10, 12, 18, 0.98); backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--cyber-blauw);
+            padding: 15px; position: sticky; top: 0; z-index: 2000;
+        }
+        .header-grid { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-        .prod-row { background: #f8fafc; padding: 10px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e2e8f0; position: relative; }
-        .btn-row-del { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; border: none; width: 22px; height: 22px; border-radius: 50%; cursor: pointer; z-index: 10; }
-        
-        .timer-display { background: #0f172a; color: #fff; text-align: center; padding: 5px; border-radius: 6px; font-size: 1.2rem; font-weight: 700; font-family: monospace; margin-bottom: 8px; }
-        .btn { padding: 12px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; font-size: 0.85rem; }
-        .btn-main { background: var(--primary); color: white; width: 100%; margin-top: 10px; }
+        input, select, textarea {
+            background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 240, 255, 0.3);
+            color: #fff; padding: 12px; border-radius: 6px; width: 100%; transition: 0.3s;
+        }
 
-        .footer-stats { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e2e8f0; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
+        /* --- SEARCH HOLOGRAAM EFFECT --- */
+        .search-wrap { grid-column: 1 / -1; position: relative; margin-top: 10px; }
+        #archiefLijst {
+            position: absolute; top: calc(100% + 5px); left: 0; right: 0; 
+            background: rgba(10, 25, 40, 0.9); border: 1px solid var(--cyber-blauw);
+            max-height: 0; overflow: hidden; z-index: 3000; border-radius: 8px;
+            transition: var(--transition-smooth); opacity: 0; 
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.3), inset 0 0 20px rgba(0, 240, 255, 0.1);
+            backdrop-filter: blur(15px);
+        }
+        #archiefLijst.open { max-height: 400px; opacity: 1; overflow-y: auto; padding: 10px 0; border-top: 2px solid var(--cyber-blauw); }
+        .zoek-optie { 
+            padding: 12px 20px; border-bottom: 1px solid rgba(0, 240, 255, 0.1); 
+            cursor: pointer; color: var(--cyber-blauw); font-family: 'Orbitron'; 
+            font-size: 0.75rem; transition: 0.3s; line-height: 1.4;
+        }
+        .zoek-optie:hover { background: rgba(0, 240, 255, 0.2); color: #fff; text-shadow: 0 0 10px var(--cyber-blauw); padding-left: 25px; }
+        .zoek-optie b { color: #fff; font-size: 0.8rem; }
+        .zoek-optie .dos-label { color: var(--cyber-groen); text-shadow: 0 0 8px rgba(0, 255, 102, 0.5); font-size: 0.65rem; display: block; }
 
+        /* --- KAART & STATUS HOLOGRAAM HEADER --- */
+        .kaart { 
+            background: var(--paneel-bg); border: 1px solid rgba(255, 255, 255, 0.05); 
+            border-radius: 12px; margin-bottom: 20px; overflow: hidden; 
+            backdrop-filter: blur(10px); animation: holo-deploy 0.5s ease-out forwards;
+            transition: var(--transition-smooth);
+        }
+        .kaart-h { 
+            padding: 20px; cursor: pointer; display: flex; justify-content: space-between; 
+            align-items: center; transition: var(--transition-smooth);
+            position: relative; overflow: hidden;
+        }
+
+        /* GEREED GLOW */
+        .status-voltooid { border: 1px solid var(--cyber-groen); box-shadow: 0 0 20px rgba(0, 255, 102, 0.15); }
+        .status-voltooid .kaart-h { 
+            background: linear-gradient(90deg, rgba(0, 255, 102, 0.15), transparent);
+            box-shadow: inset 0 0 15px rgba(0, 255, 102, 0.2);
+            border-bottom: 1px solid var(--cyber-groen);
+        }
+
+        /* FOUT GLOW */
+        .status-fout { border: 1px solid var(--cyber-rood); box-shadow: 0 0 20px rgba(255, 0, 60, 0.15); }
+        .status-fout .kaart-h { 
+            background: linear-gradient(90deg, rgba(255, 0, 60, 0.15), transparent);
+            box-shadow: inset 0 0 15px rgba(255, 0, 60, 0.2);
+            border-bottom: 1px solid var(--cyber-rood);
+        }
+
+        /* --- ANIMATIES --- */
+        @keyframes holo-scan { 0% { top: -100%; } 100% { top: 100%; } }
+        @keyframes holo-deploy { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes holo-remove { 0% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(50px); filter: blur(10px); } }
+
+        .kaart-anim-wrapper { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 0.5s ease; }
+        .ingeklapt .kaart-anim-wrapper { grid-template-rows: 0fr; }
+        .kaart-inner { overflow: hidden; }
+        .kaart-b { padding: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+
+        /* --- REGEL & TIMER --- */
+        .r { margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; animation: holo-deploy 0.4s ease-out forwards; }
+        .removing { animation: holo-remove 0.4s ease-in forwards !important; pointer-events: none; }
+
+        .timer-unit { 
+            background: rgba(40, 40, 45, 0.6); padding: 15px; border-radius: 8px; 
+            margin-bottom: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1); 
+            position: relative; overflow: hidden; transition: var(--transition-smooth);
+        }
+        .actief .timer-unit { background: rgba(0, 255, 102, 0.15); border-color: var(--cyber-groen); }
+        .actief .timer-unit::before {
+            content: ""; position: absolute; top: -100%; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(0, 255, 102, 0.2), transparent);
+            animation: holo-scan 2s infinite linear; pointer-events: none;
+        }
+        .timer-display { font-size: 2.2rem; color: #666; transition: 0.3s; }
+        .actief .timer-display { color: var(--cyber-groen); text-shadow: 0 0 10px var(--cyber-groen); }
+
+        .btn-cyber { padding: 12px 20px; border: 1px solid var(--cyber-blauw); cursor: pointer; font-weight: 700; border-radius: 6px; text-transform: uppercase; background: transparent; color: var(--cyber-blauw); transition: 0.3s; width: 100%; display: flex; align-items: center; justify-content: center; }
+        .btn-start { border-color: var(--cyber-groen); color: var(--cyber-groen); }
+        .btn-stop { border-color: #555; color: #888; }
+        .actief .btn-stop { border-color: var(--cyber-rood); color: var(--cyber-rood); }
+
+        .vervoer-box { display: flex; grid-column: 1/-1; background: #000; border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 6px; overflow: hidden; padding: 2px; }
+        .vervoer-box input { display: none; }
+        .vervoer-box label { flex: 1; text-align: center; padding: 12px; cursor: pointer; opacity: 0.4; font-weight: bold; border-radius: 4px; transition: 0.3s; }
+        .vervoer-box input:checked + label { opacity: 1; color: var(--cyber-blauw); border: 1px solid var(--cyber-blauw); }
+
+        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10, 12, 18, 0.95); backdrop-filter: blur(15px); border-top: 1px solid var(--cyber-blauw); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 1500; }
+        footer .btn-cyber { width: auto; }
+
+        #print-area { display: none; }
         @media print {
-            .container, .footer-stats, .search-container, .app-header { display: none !important; }
-            #print-report { display: block !important; }
+            body > *:not(#print-area) { display: none !important; }
+            #print-area { display: block !important; color: #000; background: #fff; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #000; padding: 8px; text-align: left; }
         }
     </style>
 </head>
 <body>
 
-<div id="print-report" style="display:none">
-    <div style="border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: flex-end;">
-        <h1>Productieverslag</h1>
-        <div id="p-meta-info" style="text-align:right"></div>
-    </div>
-    <table id="p-table-body" style="width:100%; border-collapse: collapse;"></table>
+<div id="print-area">
+    <h1>Productieverslag</h1>
+    <p id="p-meta"></p>
+    <table id="p-tabel"></table>
 </div>
+
+<header>
+    <div class="header-grid">
+        <h2 style="color: var(--cyber-blauw); font-size: 0.9rem;">CORE_V35</h2>
+        <div style="text-align: right; color: #fff; font-family: 'Orbitron';"><span id="u-top">0.00</span>U</div>
+        <input type="text" id="op" placeholder="Naam Medewerker" oninput="save()">
+        <input type="date" id="dag" onchange="load()">
+        <div class="vervoer-box">
+            <input type="radio" name="tr" id="f" value="Fiets" checked onchange="save()">
+            <label for="f">🚲 FIETS</label>
+            <input type="radio" name="tr" id="a" value="Wagen" onchange="save()">
+            <label for="a">🚗 WAGEN</label>
+        </div>
+        <div class="search-wrap">
+            <input type="text" id="q" placeholder="ZOEK KLANT OF DOSSIER..." oninput="search()">
+            <div id="archiefLijst"></div>
+        </div>
+    </div>
+</header>
 
 <div class="container">
-    <div class="search-container">
-        <label>🔍 Zoek Dossier-nr (Historiek)</label>
-        <input type="text" id="globalSearch" placeholder="Dossiernr..." oninput="searchArchive()">
-        <div id="searchResults" style="margin-top:10px; max-height:150px; overflow-y:auto;"></div>
-    </div>
-
-    <div class="app-header">
-        <div class="header-grid">
-            <div>
-                <label>Operator</label>
-                <input type="text" id="operator" placeholder="Naam" oninput="save()">
-            </div>
-            <div>
-                <label>Vervoer</label>
-                <div class="transport-toggle">
-                    <input type="radio" name="tr" id="f" value="Fiets" checked onchange="save()">
-                    <label for="f">🚲</label>
-                    <input type="radio" name="tr" id="a" value="Wagen" onchange="save()">
-                    <label for="a">🚗</label>
-                </div>
-            </div>
-        </div>
-        <div style="margin-top:10px">
-            <label>Datum</label>
-            <input type="date" id="datum" onchange="load()">
-        </div>
-    </div>
-
-    <div id="klantenLijst"></div>
-    <button class="btn btn-main" onclick="voegKlantToe()">+ NIEUWE KLANT TOEVOEGEN</button>
+    <div id="lijst"></div>
+    <button class="btn-cyber" style="background: var(--cyber-paars); color: #fff; border:none; margin-top:10px;" onclick="addKlant(null, true)">+ KLANT TOEVOEGEN</button>
 </div>
 
-<div class="footer-stats">
-    <div>
-        <span style="font-size:0.6rem; font-weight:800; color:#64748b;">UREN TOTAAL</span>
-        <div id="dagTotaal" style="font-size:1.4rem; font-weight:900; color:var(--primary)">0.00</div>
-    </div>
-    <button class="btn" style="background:#1e293b; color:white;" onclick="prepPrint()">📄 AFDRUKKEN</button>
-</div>
+<footer>
+    <div style="font-family: 'Orbitron';">TOTAAL: <span id="u-bot" style="color: var(--cyber-blauw); font-size: 1.6rem;">0.00</span>U</div>
+    <button class="btn-cyber" style="background: #fff; color: #000; border: none;" onclick="printMe()">AFDRUKKEN</button>
+</footer>
 
 <script>
     const TYPES = ["Raam kader", "Raam vleugel", "Deur kader", "Deur vleugel", "Schuifraam kader", "Schuifraam vleugel", "T-profiel", "Glaslatten", "Beslag", "Opkuisen", "Montage", "Andere"];
-    let activeTimerId = null;
-    let timerInterval = null;
+    let actID = null, tiktak = null;
+
+    function getBelgianDate() { return new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Brussels' }); }
 
     function save() {
-        const date = document.getElementById('datum').value;
+        const d = document.getElementById('dag').value;
         const data = {
-            op: document.getElementById('operator').value,
+            op: document.getElementById('op').value,
             tr: document.querySelector('input[name="tr"]:checked').value,
-            activeTimerId: activeTimerId,
-            klanten: [...document.querySelectorAll('.card')].map(c => ({
-                id: c.id,
-                n: c.querySelector('.in-n').value,
-                d: c.querySelector('.in-d').value,
-                st: c.dataset.status || '',
-                rows: [...c.querySelectorAll('.prod-row')].map(r => ({
-                    id: r.id,
-                    t: r.querySelector('.sel-t').value,
-                    u: r.querySelector('.in-u').value,
-                    o: r.querySelector('.in-o').value,
-                    s: parseInt(r.dataset.sec) || 0,
-                    start: r.dataset.start || null
+            klanten: [...document.querySelectorAll('.kaart:not(.removing)')].map(c => ({
+                id: c.id, n: c.querySelector('.in-n').value, d: c.querySelector('.in-d').value,
+                st: c.dataset.status || '', col: c.classList.contains('ingeklapt'),
+                rijen: [...c.querySelectorAll('.r:not(.removing)')].map(r => ({
+                    t: r.querySelector('.s-t').value, u: r.querySelector('.i-u').value,
+                    o: r.querySelector('.i-o').value, s: parseInt(r.dataset.sec) || 0, id: r.id
                 }))
             }))
         };
-        localStorage.setItem('prod_v8_' + date, JSON.stringify(data));
+        localStorage.setItem('urenV35_' + d, JSON.stringify(data));
         calc();
     }
 
     function load() {
-        clearInterval(timerInterval);
-        document.getElementById('klantenLijst').innerHTML = '';
-        const raw = localStorage.getItem('prod_v8_' + document.getElementById('datum').value);
+        clearInterval(tiktak); document.getElementById('lijst').innerHTML = '';
+        const raw = localStorage.getItem('urenV35_' + document.getElementById('dag').value);
         if (raw) {
             const data = JSON.parse(raw);
-            document.getElementById('operator').value = data.op || '';
-            document.getElementById(data.tr === 'Fiets' ? 'f' : 'a').checked = true;
-            activeTimerId = data.activeTimerId || null;
-            data.klanten.forEach(k => voegKlantToe(k));
-            if(activeTimerId) startTick();
-        } else { 
-            activeTimerId = null;
-            voegKlantToe(); 
-        }
+            document.getElementById('op').value = data.op || '';
+            if(data.tr) document.getElementById(data.tr === 'Fiets' ? 'f' : 'a').checked = true;
+            data.klanten.forEach(k => addKlant(k));
+        } else { addKlant(null, true); }
         calc();
     }
 
-    function voegKlantToe(data = null) {
-        const id = data?.id || 'k' + Math.random().toString(36).substr(2,5);
-        const html = `
-            <div class="card ${data?.st ? 'status-'+data.st : ''}" id="${id}" data-status="${data?.st || ''}">
-                <div class="card-header" onclick="toggle('${id}')">
-                    <div style="flex:1">
-                        <span style="font-weight:800; font-size:0.9rem; display:block">${data?.n || 'Nieuwe Klant'}</span>
-                        <span style="font-size:0.75rem; color:#64748b">Dossier: ${data?.d || '---'}</span>
-                    </div>
-                    <div style="font-weight:900; color:var(--primary)"><span class="k-uur">0.00</span>u</div>
-                </div>
-                <div class="card-body">
-                    <div class="header-grid" style="margin-bottom:10px">
-                        <input type="text" class="in-n" value="${data?.n || ''}" placeholder="Klant" oninput="sync('${id}')">
-                        <input type="text" class="in-d" value="${data?.d || ''}" placeholder="Dossiernr" oninput="sync('${id}')">
-                    </div>
-                    <div class="rijen"></div>
-                    <button class="btn" style="background:#f1f5f9; width:100%; margin-bottom:10px" onclick="voegRij('${id}')">+ Rij</button>
-                    <div style="display:flex; gap:5px">
-                        <button class="btn" style="background:#dcfce7; color:var(--success); flex:1" onclick="setStat('${id}', 'done')">OK</button>
-                        <button class="btn" style="background:#fee2e2; color:var(--danger); flex:1" onclick="setStat('${id}', 'pending')">NIET OK</button>
-                    </div>
-                    <button style="border:none; color:#94a3b8; font-size:0.6rem; width:100%; margin-top:10px; background:none" onclick="delK('${id}')">KLANT WISSEN</button>
-                </div>
-            </div>`;
-        document.getElementById('klantenLijst').insertAdjacentHTML('beforeend', html);
-        if(data?.rows) data.rows.forEach(r => voegRij(id, r)); else voegRij(id);
+    function search() {
+        const v = document.getElementById('q').value.toLowerCase();
+        const r = document.getElementById('archiefLijst');
+        if(v.length < 2) { r.classList.remove('open'); return; }
+        let h = '';
+        for(let i=0; i<localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if(k.startsWith('urenV35_')) {
+                const data = JSON.parse(localStorage.getItem(k));
+                data.klanten.forEach(kl => { 
+                    if(kl.n.toLowerCase().includes(v) || kl.d.toLowerCase().includes(v)) {
+                        h += `<div class="zoek-optie" onclick="jump('${k.split('_')[1]}')">
+                                <b>${kl.n}</b>
+                                <span class="dos-label">DOSSIER: ${kl.d || 'GEEN'} | DATUM: ${k.split('_')[1]}</span>
+                              </div>`;
+                    }
+                });
+            }
+        }
+        r.innerHTML = h || '<div class="zoek-optie">GEEN RESULTATEN</div>';
+        r.classList.add('open');
     }
 
-    function voegRij(kid, r = null) {
+    function jump(d) { document.getElementById('dag').value = d; load(); document.getElementById('archiefLijst').classList.remove('open'); document.getElementById('q').value = ''; }
+
+    function addKlant(data = null, isNew = false) {
+        const id = data?.id || 'k' + Date.now();
+        const html = `
+            <div class="kaart status-${data?.st || ''} ${data?.col ? 'ingeklapt' : ''}" id="${id}" data-status="${data?.st || ''}">
+                <div class="kaart-h" onclick="tgl('${id}')">
+                    <div style="flex:1">
+                        <h3><span class="n-txt">${data?.n || 'Nieuwe Klant'}</span> <small>[<span class="d-txt">${data?.d || '---'}</span>]</small></h3>
+                    </div>
+                    <div style="font-family:'Orbitron'; color:var(--cyber-blauw);"><span class="k-u">0.00</span>u</div>
+                </div>
+                <div class="kaart-anim-wrapper">
+                    <div class="kaart-inner">
+                        <div class="kaart-b">
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px">
+                                <input type="text" class="in-n" value="${data?.n || ''}" placeholder="Naam" oninput="sync('${id}')">
+                                <input type="text" class="in-d" value="${data?.d || ''}" placeholder="Dossier" oninput="sync('${id}')">
+                            </div>
+                            <div class="rijen"></div>
+                            <button class="btn-cyber" style="border-style:dashed; margin-bottom:10px" onclick="addRij('${id}')">+ REGEL TOEVOEGEN</button>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px">
+                                <button class="btn-cyber" style="border-color:var(--cyber-groen); color:var(--cyber-groen)" onclick="setS('${id}','voltooid')">GEREED</button>
+                                <button class="btn-cyber" style="border-color:var(--cyber-rood); color:var(--cyber-rood)" onclick="setS('${id}','fout')">FOUT</button>
+                            </div>
+                            <button class="btn-cyber" style="border-color:#444; color:#888; font-size:0.7rem;" onclick="wisKlant('${id}')">KLANT VERWIJDEREN</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        document.getElementById('lijst').insertAdjacentHTML('beforeend', html);
+        if(data?.rijen) data.rijen.forEach(r => addRij(id, r)); else addRij(id);
+        if(isNew) save();
+    }
+
+    function addRij(kid, r = null) {
         const rid = r?.id || 'r' + Math.random().toString(36).substr(2,5);
         const html = `
-            <div class="prod-row" id="${rid}" data-sec="${r?.s || 0}" data-start="${r?.start || ''}">
-                <button class="btn-row-del" onclick="delR('${rid}')">×</button>
-                <div class="timer-display">${fmt(r?.s || 0)}</div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-bottom:5px">
-                    <button class="btn btn-start" style="background:var(--warning); color:white; padding:8px" onclick="tglT('${rid}', true)">START</button>
-                    <button class="btn" style="background:#64748b; color:white; padding:8px" onclick="tglT('${rid}', false)">STOP</button>
+            <div class="r" id="${rid}" data-sec="${r?.s || 0}">
+                <div class="timer-unit"><div class="timer-display">${fmt(r?.s || 0)}</div></div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px">
+                    <button class="btn-cyber btn-start" onclick="timer('${rid}', true)">START</button>
+                    <button class="btn-cyber btn-stop" onclick="timer('${rid}', false)">STOP</button>
                 </div>
-                <div class="header-grid">
-                    <select class="sel-t" onchange="save()">${TYPES.map(t => `<option ${r?.t === t ? 'selected' : ''}>${t}</option>`).join('')}</select>
-                    <input type="number" class="in-u" value="${r?.u || '0.00'}" step="0.25" oninput="save()">
+                <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:8px">
+                    <select class="s-t" onchange="save()">${TYPES.map(t => `<option ${r?.t === t ? 'selected' : ''}>${t}</option>`).join('')}</select>
+                    <input type="number" class="i-u" value="${r?.u || '0.00'}" step="0.25" oninput="save()">
                 </div>
-                <textarea class="in-o" placeholder="Opmerking..." oninput="save()" rows="1" style="margin-top:5px; font-size:14px">${r?.o || ''}</textarea>
+                <textarea class="i-o" placeholder="Opmerking..." oninput="save()" style="margin-top:8px; height:40px">${r?.o || ''}</textarea>
+                <button class="btn-cyber" style="border:none; color:var(--cyber-rood); font-size:0.65rem; margin-top:5px" onclick="wisRij('${rid}')">VERWIJDER REGEL</button>
             </div>`;
         document.getElementById(kid).querySelector('.rijen').insertAdjacentHTML('beforeend', html);
     }
 
-    function tglT(rid, start) {
+    function timer(rid, s) {
         const el = document.getElementById(rid);
-        if(start) {
-            if(activeTimerId) tglT(activeTimerId, false); // Stop vorige
-            activeTimerId = rid;
-            el.dataset.start = Date.now();
-            el.closest('.card').classList.add('active-timer');
-            startTick();
+        if(s) {
+            if(actID) timer(actID, false);
+            actID = rid; el.dataset.start = Date.now(); el.classList.add('actief');
+            tiktak = setInterval(() => {
+                const sec = (parseInt(el.dataset.sec) || 0) + Math.floor((Date.now() - parseInt(el.dataset.start)) / 1000);
+                el.querySelector('.timer-display').innerText = fmt(sec);
+            }, 1000);
         } else {
-            if(activeTimerId === rid) {
-                const elapsed = Math.floor((Date.now() - parseInt(el.dataset.start)) / 1000);
-                el.dataset.sec = (parseInt(el.dataset.sec) || 0) + elapsed;
-                el.dataset.start = '';
-                activeTimerId = null;
-                clearInterval(timerInterval);
-                // Bereken uren (afronden op kwartier)
-                el.querySelector('.in-u').value = (Math.round((parseInt(el.dataset.sec)/3600)*4)/4).toFixed(2);
-                el.closest('.card').classList.remove('active-timer');
+            if(actID === rid) {
+                el.dataset.sec = (parseInt(el.dataset.sec) || 0) + Math.floor((Date.now() - parseInt(el.dataset.start)) / 1000);
+                el.dataset.start = ''; actID = null; clearInterval(tiktak);
+                el.querySelector('.i-u').value = (Math.round((parseInt(el.dataset.sec)/3600)*4)/4).toFixed(2);
+                el.classList.remove('actief');
             }
         }
         save();
     }
 
-    function startTick() {
-        clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-            if(!activeTimerId) return;
-            const el = document.getElementById(activeTimerId);
-            const currentElapsed = Math.floor((Date.now() - parseInt(el.dataset.start)) / 1000);
-            const totalSec = (parseInt(el.dataset.sec) || 0) + currentElapsed;
-            el.querySelector('.timer-display').innerText = fmt(totalSec);
-        }, 1000);
-    }
+    function wisRij(rid) { const el = document.getElementById(rid); el.classList.add('removing'); setTimeout(() => { el.remove(); save(); }, 400); }
+    function wisKlant(kid) { if(confirm("Klant volledig verwijderen?")) { const el = document.getElementById(kid); el.classList.add('removing'); setTimeout(() => { el.remove(); save(); }, 400); } }
+    function tgl(id) { if(!event.target.closest('input, button, select, textarea')) { document.getElementById(id).classList.toggle('ingeklapt'); save(); } }
+    function sync(id) { const c = document.getElementById(id); c.querySelector('.n-txt').innerText = c.querySelector('.in-n').value || 'Klant'; c.querySelector('.d-txt').innerText = c.querySelector('.in-d').value || '---'; save(); }
+    function setS(id, s) { const c = document.getElementById(id); c.dataset.status = s; c.className = `kaart status-${s} ingeklapt`; save(); }
+    function fmt(s) { return `${Math.floor(s/3600).toString().padStart(2,'0')}:${Math.floor((s%3600)/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`; }
+    function calc() { let dag = 0; document.querySelectorAll('.kaart:not(.removing)').forEach(c => { let k = 0; c.querySelectorAll('.i-u').forEach(i => k += parseFloat(i.value) || 0); c.querySelector('.k-u').innerText = k.toFixed(2); dag += k; }); document.getElementById('u-bot').innerText = dag.toFixed(2); document.getElementById('u-top').innerText = dag.toFixed(2); }
 
-    function fmt(s) {
-        const h = Math.floor(s / 3600);
-        const m = Math.floor((s % 3600) / 60);
-        const sec = s % 60;
-        return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
-    }
-
-    function calc() {
-        let dagTotaal = 0;
-        document.querySelectorAll('.card').forEach(card => {
-            let klantTotaal = 0;
-            card.querySelectorAll('.in-u').forEach(input => {
-                klantTotaal += parseFloat(input.value) || 0;
-            });
-            card.querySelector('.k-uur').innerText = klantTotaal.toFixed(2);
-            dagTotaal += klantTotaal;
+    function printMe() {
+        const tr = document.querySelector('input[name="tr"]:checked').value;
+        document.getElementById('p-meta').innerHTML = `<b>Medewerker:</b> ${document.getElementById('op').value} | <b>Datum:</b> ${document.getElementById('dag').value} | <b>Vervoer:</b> ${tr} | <b>Totaal:</b> ${document.getElementById('u-bot').innerText}u`;
+        let h = '<tr><th>Klant</th><th>Dossier</th><th>Werkzaamheid</th><th>Uren</th></tr>';
+        document.querySelectorAll('.kaart').forEach(k => {
+            const kn = k.querySelector('.in-n').value; const kd = k.querySelector('.in-d').value;
+            k.querySelectorAll('.r').forEach(r => { h += `<tr><td>${kn}</td><td>${kd}</td><td>${r.querySelector('.s-t').value}</td><td>${r.querySelector('.i-u').value}u</td></tr>`; });
         });
-        document.getElementById('dagTotaal').innerText = dagTotaal.toFixed(2);
-    }
-
-    function sync(id) {
-        const c = document.getElementById(id);
-        c.querySelector('span:first-child').innerText = c.querySelector('.in-n').value || 'Nieuwe Klant';
-        c.querySelector('span:nth-child(2)').innerText = 'Dossier: ' + c.querySelector('.in-d').value;
-        save();
-    }
-
-    function toggle(id) {
-        if(!event.target.closest('input, button, select, textarea')) {
-            document.getElementById(id).classList.toggle('collapsed');
-        }
-    }
-
-    function setStat(id, s) {
-        const el = document.getElementById(id);
-        el.dataset.status = s;
-        el.classList.remove('status-done', 'status-pending');
-        if(s) el.classList.add('status-'+s);
-        save();
-    }
-
-    function delR(rid) { if(confirm("Rij wissen?")) { document.getElementById(rid).remove(); save(); } }
-    function delK(id) { if(confirm("Klant wissen?")) { document.getElementById(id).remove(); save(); } }
-
-    function searchArchive() {
-        const q = document.getElementById('globalSearch').value.toLowerCase();
-        const res = document.getElementById('searchResults');
-        if(q.length < 2) { res.innerHTML = ''; return; }
-        let h = '';
-        for(let i=0; i<localStorage.length; i++) {
-            const k = localStorage.key(i);
-            if(k.startsWith('prod_v8_')) {
-                const d = JSON.parse(localStorage.getItem(k));
-                d.klanten.forEach(kl => {
-                    if(kl.d.toLowerCase().includes(q)) h += `<div onclick="goToDate('${k.replace('prod_v8_','')}')" style="padding:8px; border-bottom:1px solid #eee; font-size:0.8rem; cursor:pointer"><strong>${k.replace('prod_v8_','')}</strong> - ${kl.n} (${kl.d})</div>`;
-                });
-            }
-        }
-        res.innerHTML = h || 'Geen resultaten';
-    }
-
-    function goToDate(d) { document.getElementById('datum').value = d; load(); document.getElementById('searchResults').innerHTML = ''; }
-
-    function prepPrint() {
-        const op = document.getElementById('operator').value || '...';
-        const dat = document.getElementById('datum').value;
-        const vText = document.querySelector('input[name="tr"]:checked').value;
-        document.getElementById('p-meta-info').innerHTML = `Operator: ${op}<br>Datum: ${dat}<br>Vervoer: ${vText}`;
-        let tableHtml = `<tr><th style="border:1px solid #000;padding:5px">Klant/Dossier</th><th style="border:1px solid #000;padding:5px">Type</th><th style="border:1px solid #000;padding:5px">Uren</th><th style="border:1px solid #000;padding:5px">Opmerking</th></tr>`;
-        document.querySelectorAll('.card').forEach(c => {
-            const n = c.querySelector('.in-n').value;
-            const d = c.querySelector('.in-d').value;
-            const rows = c.querySelectorAll('.prod-row');
-            rows.forEach((r, idx) => {
-                tableHtml += `<tr>
-                    ${idx === 0 ? `<td rowspan="${rows.length}" style="border:1px solid #000;padding:5px"><strong>${n}</strong><br>${d}</td>` : ''}
-                    <td style="border:1px solid #000;padding:5px">${r.querySelector('.sel-t').value}</td>
-                    <td style="border:1px solid #000;padding:5px">${r.querySelector('.in-u').value}u</td>
-                    <td style="border:1px solid #000;padding:5px">${r.querySelector('.in-o').value}</td>
-                </tr>`;
-            });
-        });
-        document.getElementById('p-table-body').innerHTML = tableHtml;
+        document.getElementById('p-tabel').innerHTML = h;
         window.print();
     }
 
-    window.onload = () => { 
-        if(!document.getElementById('datum').value) {
-            document.getElementById('datum').value = new Date().toISOString().split('T')[0];
-        }
-        load(); 
-    };
+    window.onload = () => { if(!document.getElementById('dag').value) document.getElementById('dag').value = getBelgianDate(); load(); };
 </script>
-
 </body>
 </html>

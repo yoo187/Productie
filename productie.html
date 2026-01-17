@@ -63,53 +63,34 @@
         .zoek-optie b { color: #fff; font-size: 0.8rem; }
         .zoek-optie .dos-label { color: var(--cyber-groen); text-shadow: 0 0 8px rgba(0, 255, 102, 0.5); font-size: 0.65rem; display: block; }
 
-        /* --- KAART & STATUS HOLOGRAAM HEADER --- */
+        /* --- KAART & STATUS --- */
         .kaart { 
             background: var(--paneel-bg); border: 1px solid rgba(255, 255, 255, 0.05); 
             border-radius: 12px; margin-bottom: 20px; overflow: hidden; 
             backdrop-filter: blur(10px); animation: holo-deploy 0.5s ease-out forwards;
             transition: var(--transition-smooth);
         }
-        .kaart-h { 
-            padding: 20px; cursor: pointer; display: flex; justify-content: space-between; 
-            align-items: center; transition: var(--transition-smooth);
-            position: relative; overflow: hidden;
-        }
+        .kaart-h { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; position: relative; }
 
-        /* GEREED GLOW */
         .status-voltooid { border: 1px solid var(--cyber-groen); box-shadow: 0 0 20px rgba(0, 255, 102, 0.15); }
-        .status-voltooid .kaart-h { 
-            background: linear-gradient(90deg, rgba(0, 255, 102, 0.15), transparent);
-            box-shadow: inset 0 0 15px rgba(0, 255, 102, 0.2);
-            border-bottom: 1px solid var(--cyber-groen);
-        }
-
-        /* FOUT GLOW */
+        .status-voltooid .kaart-h { background: linear-gradient(90deg, rgba(0, 255, 102, 0.15), transparent); border-bottom: 1px solid var(--cyber-groen); }
+        
         .status-fout { border: 1px solid var(--cyber-rood); box-shadow: 0 0 20px rgba(255, 0, 60, 0.15); }
-        .status-fout .kaart-h { 
-            background: linear-gradient(90deg, rgba(255, 0, 60, 0.15), transparent);
-            box-shadow: inset 0 0 15px rgba(255, 0, 60, 0.2);
-            border-bottom: 1px solid var(--cyber-rood);
-        }
-
-        /* --- ANIMATIES --- */
-        @keyframes holo-scan { 0% { top: -100%; } 100% { top: 100%; } }
-        @keyframes holo-deploy { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
-        @keyframes holo-remove { 0% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(50px); filter: blur(10px); } }
+        .status-fout .kaart-h { background: linear-gradient(90deg, rgba(255, 0, 60, 0.15), transparent); border-bottom: 1px solid var(--cyber-rood); }
 
         .kaart-anim-wrapper { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 0.5s ease; }
         .ingeklapt .kaart-anim-wrapper { grid-template-rows: 0fr; }
         .kaart-inner { overflow: hidden; }
         .kaart-b { padding: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
 
-        /* --- REGEL & TIMER --- */
         .r { margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; animation: holo-deploy 0.4s ease-out forwards; }
         .removing { animation: holo-remove 0.4s ease-in forwards !important; pointer-events: none; }
 
+        /* --- TIMER --- */
         .timer-unit { 
             background: rgba(40, 40, 45, 0.6); padding: 15px; border-radius: 8px; 
             margin-bottom: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1); 
-            position: relative; overflow: hidden; transition: var(--transition-smooth);
+            position: relative; overflow: hidden;
         }
         .actief .timer-unit { background: rgba(0, 255, 102, 0.15); border-color: var(--cyber-groen); }
         .actief .timer-unit::before {
@@ -117,7 +98,7 @@
             background: linear-gradient(to bottom, transparent, rgba(0, 255, 102, 0.2), transparent);
             animation: holo-scan 2s infinite linear; pointer-events: none;
         }
-        .timer-display { font-size: 2.2rem; color: #666; transition: 0.3s; }
+        .timer-display { font-size: 2.2rem; color: #666; }
         .actief .timer-display { color: var(--cyber-groen); text-shadow: 0 0 10px var(--cyber-groen); }
 
         .btn-cyber { padding: 12px 20px; border: 1px solid var(--cyber-blauw); cursor: pointer; font-weight: 700; border-radius: 6px; text-transform: uppercase; background: transparent; color: var(--cyber-blauw); transition: 0.3s; width: 100%; display: flex; align-items: center; justify-content: center; }
@@ -132,14 +113,18 @@
 
         .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
         footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10, 12, 18, 0.95); backdrop-filter: blur(15px); border-top: 1px solid var(--cyber-blauw); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 1500; }
-        footer .btn-cyber { width: auto; }
+
+        @keyframes holo-scan { 0% { top: -100%; } 100% { top: 100%; } }
+        @keyframes holo-deploy { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes holo-remove { 0% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(50px); filter: blur(10px); } }
 
         #print-area { display: none; }
         @media print {
             body > *:not(#print-area) { display: none !important; }
-            #print-area { display: block !important; color: #000; background: #fff; padding: 20px; }
+            #print-area { display: block !important; color: #000; background: #fff; padding: 20px; font-family: sans-serif; }
             table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+            th, td { border: 1px solid #000; padding: 8px; text-align: left; font-size: 12px; }
+            th { background: #eee; }
         }
     </style>
 </head>
@@ -177,12 +162,12 @@
 
 <footer>
     <div style="font-family: 'Orbitron';">TOTAAL: <span id="u-bot" style="color: var(--cyber-blauw); font-size: 1.6rem;">0.00</span>U</div>
-    <button class="btn-cyber" style="background: #fff; color: #000; border: none;" onclick="printMe()">AFDRUKKEN</button>
+    <button class="btn-cyber" style="background: #fff; color: #000; border: none; width: auto;" onclick="printMe()">AFDRUKKEN</button>
 </footer>
 
 <script>
     const TYPES = ["Raam kader", "Raam vleugel", "Deur kader", "Deur vleugel", "Schuifraam kader", "Schuifraam vleugel", "T-profiel", "Glaslatten", "Beslag", "Opkuisen", "Montage", "Andere"];
-    let actID = null, tiktak = null;
+    let timers = {}; 
 
     function getBelgianDate() { return new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Brussels' }); }
 
@@ -196,7 +181,8 @@
                 st: c.dataset.status || '', col: c.classList.contains('ingeklapt'),
                 rijen: [...c.querySelectorAll('.r:not(.removing)')].map(r => ({
                     t: r.querySelector('.s-t').value, u: r.querySelector('.i-u').value,
-                    o: r.querySelector('.i-o').value, s: parseInt(r.dataset.sec) || 0, id: r.id
+                    o: r.querySelector('.i-o').value, s: parseInt(r.dataset.sec) || 0, id: r.id,
+                    run: !!timers[r.id], st: r.dataset.start || ''
                 }))
             }))
         };
@@ -205,13 +191,18 @@
     }
 
     function load() {
-        clearInterval(tiktak); document.getElementById('lijst').innerHTML = '';
+        Object.values(timers).forEach(clearInterval);
+        timers = {};
+        document.getElementById('lijst').innerHTML = '';
         const raw = localStorage.getItem('urenV35_' + document.getElementById('dag').value);
         if (raw) {
             const data = JSON.parse(raw);
             document.getElementById('op').value = data.op || '';
             if(data.tr) document.getElementById(data.tr === 'Fiets' ? 'f' : 'a').checked = true;
-            data.klanten.forEach(k => addKlant(k));
+            data.klanten.forEach(k => {
+                addKlant(k);
+                k.rijen.forEach(r => { if(r.run) timer(r.id, true, r.st); });
+            });
         } else { addKlant(null, true); }
         calc();
     }
@@ -225,11 +216,12 @@
             const k = localStorage.key(i);
             if(k.startsWith('urenV35_')) {
                 const data = JSON.parse(localStorage.getItem(k));
+                const datum = k.split('_')[1];
                 data.klanten.forEach(kl => { 
                     if(kl.n.toLowerCase().includes(v) || kl.d.toLowerCase().includes(v)) {
-                        h += `<div class="zoek-optie" onclick="jump('${k.split('_')[1]}')">
+                        h += `<div class="zoek-optie" onclick="jump('${datum}')">
                                 <b>${kl.n}</b>
-                                <span class="dos-label">DOSSIER: ${kl.d || 'GEEN'} | DATUM: ${k.split('_')[1]}</span>
+                                <span class="dos-label">DOSSIER: ${kl.d || 'GEEN'} | DATUM: ${datum}</span>
                               </div>`;
                     }
                 });
@@ -242,6 +234,7 @@
     function jump(d) { document.getElementById('dag').value = d; load(); document.getElementById('archiefLijst').classList.remove('open'); document.getElementById('q').value = ''; }
 
     function addKlant(data = null, isNew = false) {
+        if (isNew) document.querySelectorAll('.kaart').forEach(k => k.classList.add('ingeklapt'));
         const id = data?.id || 'k' + Date.now();
         const html = `
             <div class="kaart status-${data?.st || ''} ${data?.col ? 'ingeklapt' : ''}" id="${id}" data-status="${data?.st || ''}">
@@ -277,7 +270,7 @@
     function addRij(kid, r = null) {
         const rid = r?.id || 'r' + Math.random().toString(36).substr(2,5);
         const html = `
-            <div class="r" id="${rid}" data-sec="${r?.s || 0}">
+            <div class="r" id="${rid}" data-sec="${r?.s || 0}" data-start="${r?.st || ''}">
                 <div class="timer-unit"><div class="timer-display">${fmt(r?.s || 0)}</div></div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px">
                     <button class="btn-cyber btn-start" onclick="timer('${rid}', true)">START</button>
@@ -293,19 +286,23 @@
         document.getElementById(kid).querySelector('.rijen').insertAdjacentHTML('beforeend', html);
     }
 
-    function timer(rid, s) {
+    function timer(rid, s, forceStart = null) {
         const el = document.getElementById(rid);
+        if(!el) return;
         if(s) {
-            if(actID) timer(actID, false);
-            actID = rid; el.dataset.start = Date.now(); el.classList.add('actief');
-            tiktak = setInterval(() => {
+            if(timers[rid]) return;
+            el.dataset.start = forceStart || Date.now();
+            el.classList.add('actief');
+            timers[rid] = setInterval(() => {
                 const sec = (parseInt(el.dataset.sec) || 0) + Math.floor((Date.now() - parseInt(el.dataset.start)) / 1000);
                 el.querySelector('.timer-display').innerText = fmt(sec);
             }, 1000);
         } else {
-            if(actID === rid) {
+            if(timers[rid]) {
+                clearInterval(timers[rid]);
+                delete timers[rid];
                 el.dataset.sec = (parseInt(el.dataset.sec) || 0) + Math.floor((Date.now() - parseInt(el.dataset.start)) / 1000);
-                el.dataset.start = ''; actID = null; clearInterval(tiktak);
+                el.dataset.start = '';
                 el.querySelector('.i-u').value = (Math.round((parseInt(el.dataset.sec)/3600)*4)/4).toFixed(2);
                 el.classList.remove('actief');
             }
@@ -313,8 +310,8 @@
         save();
     }
 
-    function wisRij(rid) { const el = document.getElementById(rid); el.classList.add('removing'); setTimeout(() => { el.remove(); save(); }, 400); }
-    function wisKlant(kid) { if(confirm("Klant volledig verwijderen?")) { const el = document.getElementById(kid); el.classList.add('removing'); setTimeout(() => { el.remove(); save(); }, 400); } }
+    function wisRij(rid) { if(timers[rid]) { clearInterval(timers[rid]); delete timers[rid]; } const el = document.getElementById(rid); el.classList.add('removing'); setTimeout(() => { el.remove(); save(); }, 400); }
+    function wisKlant(kid) { if(confirm("Klant volledig verwijderen?")) { const el = document.getElementById(kid); el.querySelectorAll('.r').forEach(r => { if(timers[r.id]) { clearInterval(timers[r.id]); delete timers[r.id]; } }); el.classList.add('removing'); setTimeout(() => { el.remove(); save(); }, 400); } }
     function tgl(id) { if(!event.target.closest('input, button, select, textarea')) { document.getElementById(id).classList.toggle('ingeklapt'); save(); } }
     function sync(id) { const c = document.getElementById(id); c.querySelector('.n-txt').innerText = c.querySelector('.in-n').value || 'Klant'; c.querySelector('.d-txt').innerText = c.querySelector('.in-d').value || '---'; save(); }
     function setS(id, s) { const c = document.getElementById(id); c.dataset.status = s; c.className = `kaart status-${s} ingeklapt`; save(); }
@@ -324,10 +321,12 @@
     function printMe() {
         const tr = document.querySelector('input[name="tr"]:checked').value;
         document.getElementById('p-meta').innerHTML = `<b>Medewerker:</b> ${document.getElementById('op').value} | <b>Datum:</b> ${document.getElementById('dag').value} | <b>Vervoer:</b> ${tr} | <b>Totaal:</b> ${document.getElementById('u-bot').innerText}u`;
-        let h = '<tr><th>Klant</th><th>Dossier</th><th>Werkzaamheid</th><th>Uren</th></tr>';
+        let h = '<tr><th>Klant</th><th>Dossier</th><th>Werkzaamheid</th><th>Uren</th><th>Opmerking</th></tr>';
         document.querySelectorAll('.kaart').forEach(k => {
             const kn = k.querySelector('.in-n').value; const kd = k.querySelector('.in-d').value;
-            k.querySelectorAll('.r').forEach(r => { h += `<tr><td>${kn}</td><td>${kd}</td><td>${r.querySelector('.s-t').value}</td><td>${r.querySelector('.i-u').value}u</td></tr>`; });
+            k.querySelectorAll('.r').forEach(r => { 
+                h += `<tr><td>${kn}</td><td>${kd}</td><td>${r.querySelector('.s-t').value}</td><td>${r.querySelector('.i-u').value}u</td><td>${r.querySelector('.i-o').value}</td></tr>`; 
+            });
         });
         document.getElementById('p-tabel').innerHTML = h;
         window.print();

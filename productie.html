@@ -11,9 +11,15 @@
             --cyber-paars: #6e00ff;
             --cyber-rood: #ff003c;
             --cyber-groen: #00ff66;
+            --cyber-oranje: #ffaa00;
             --bg: #050608;
             --paneel-bg: rgba(20, 25, 35, 0.7);
             --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Glow Variabelen */
+            --glow-groen: 0 0 15px rgba(0, 255, 102, 0.6);
+            --glow-rood: 0 0 15px rgba(255, 0, 60, 0.6);
+            --glow-oranje: 0 0 15px rgba(255, 170, 0, 0.6);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -43,7 +49,6 @@
             color: #fff; padding: 12px; border-radius: 6px; width: 100%; transition: 0.3s;
         }
 
-        /* --- SEARCH HOLOGRAAM EFFECT --- */
         .search-wrap { grid-column: 1 / -1; position: relative; margin-top: 10px; }
         #archiefLijst {
             position: absolute; top: calc(100% + 5px); left: 0; right: 0; 
@@ -59,81 +64,110 @@
             cursor: pointer; color: var(--cyber-blauw); font-family: 'Orbitron'; 
             font-size: 0.75rem; transition: 0.3s; line-height: 1.4;
         }
-        .zoek-optie:hover { background: rgba(0, 240, 255, 0.2); color: #fff; text-shadow: 0 0 10px var(--cyber-blauw); padding-left: 25px; }
-        .zoek-optie b { color: #fff; font-size: 0.8rem; }
-        .zoek-optie .dos-label { color: var(--cyber-groen); text-shadow: 0 0 8px rgba(0, 255, 102, 0.5); font-size: 0.65rem; display: block; }
 
-        /* --- KAART & STATUS --- */
         .kaart { 
-            background: var(--paneel-bg); border: 1px solid rgba(255, 255, 255, 0.05); 
+            background: var(--paneel-bg); border: 1px solid rgba(255, 255, 255, 0.1); 
             border-radius: 12px; margin-bottom: 20px; overflow: hidden; 
             backdrop-filter: blur(10px); animation: holo-deploy 0.5s ease-out forwards;
             transition: var(--transition-smooth);
         }
-        .kaart-h { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; position: relative; }
-
-        .status-voltooid { border: 1px solid var(--cyber-groen); box-shadow: 0 0 20px rgba(0, 255, 102, 0.15); }
-        .status-voltooid .kaart-h { background: linear-gradient(90deg, rgba(0, 255, 102, 0.15), transparent); border-bottom: 1px solid var(--cyber-groen); }
-        
-        .status-fout { border: 1px solid var(--cyber-rood); box-shadow: 0 0 20px rgba(255, 0, 60, 0.15); }
-        .status-fout .kaart-h { background: linear-gradient(90deg, rgba(255, 0, 60, 0.15), transparent); border-bottom: 1px solid var(--cyber-rood); }
+        .kaart-h { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; position: relative; border-bottom: 1px solid rgba(255,255,255,0.1); transition: background 0.5s ease; }
 
         .kaart-anim-wrapper { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 0.5s ease; }
         .ingeklapt .kaart-anim-wrapper { grid-template-rows: 0fr; }
         .kaart-inner { overflow: hidden; }
-        .kaart-b { padding: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .kaart-b { padding: 20px; }
 
-        .r { margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; animation: holo-deploy 0.4s ease-out forwards; }
+        .r { margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; animation: holo-deploy 0.4s ease-out forwards; transition: var(--transition-smooth); overflow: hidden; }
+        
+        .r.status-voltooid { border-left: 5px solid var(--cyber-groen); box-shadow: inset 5px 0 10px -5px var(--cyber-groen); }
+        .r.status-fout { border-left: 5px solid var(--cyber-rood); box-shadow: inset 5px 0 10px -5px var(--cyber-rood); }
+        .r.status-progress { border-left: 5px solid var(--cyber-oranje); box-shadow: inset 5px 0 10px -5px var(--cyber-oranje); }
+        
+        .r-header { cursor: pointer; padding: 12px; display: flex; justify-content: space-between; align-items: center; font-family: 'Orbitron'; font-size: 0.7rem; color: #fff; background: rgba(255,255,255,0.03); transition: background 0.3s; }
+        
+        .r-anim-wrapper { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .r.ingeklapt .r-anim-wrapper { grid-template-rows: 0fr; }
+        .r-content { overflow: hidden; padding: 0 15px; }
+        .r-inner-box { padding: 15px 0; }
+
+        .sub-items-lijst { margin-top: 15px; border-top: 1px dashed rgba(0, 240, 255, 0.2); padding-top: 10px; }
+        .sub-item { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 4px; }
+        
+        .sub-item input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; transition: 0.3s; }
+        .si-v { accent-color: var(--cyber-groen); }
+        .si-v:checked { filter: drop-shadow(0 0 5px var(--cyber-groen)); }
+        .si-x { accent-color: var(--cyber-rood); }
+        .si-x:checked { filter: drop-shadow(0 0 5px var(--cyber-rood)); }
+        
+        .sub-item input[type="text"] { padding: 5px; font-size: 0.8rem; border-color: rgba(255,255,255,0.1); flex: 1; }
+
         .removing { animation: holo-remove 0.4s ease-in forwards !important; pointer-events: none; }
 
-        /* --- TIMER --- */
         .timer-unit { 
             background: rgba(40, 40, 45, 0.6); padding: 15px; border-radius: 8px; 
             margin-bottom: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1); 
             position: relative; overflow: hidden;
         }
-        .actief .timer-unit { background: rgba(0, 255, 102, 0.15); border-color: var(--cyber-groen); }
-        .actief .timer-unit::before {
-            content: ""; position: absolute; top: -100%; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, transparent, rgba(0, 255, 102, 0.2), transparent);
-            animation: holo-scan 2s infinite linear; pointer-events: none;
-        }
+        .actief .timer-unit { background: rgba(0, 255, 102, 0.15); border-color: var(--cyber-groen); box-shadow: var(--glow-groen); }
         .timer-display { font-size: 2.2rem; color: #666; }
         .actief .timer-display { color: var(--cyber-groen); text-shadow: 0 0 10px var(--cyber-groen); }
 
         .btn-cyber { padding: 12px 20px; border: 1px solid var(--cyber-blauw); cursor: pointer; font-weight: 700; border-radius: 6px; text-transform: uppercase; background: transparent; color: var(--cyber-blauw); transition: 0.3s; width: 100%; display: flex; align-items: center; justify-content: center; }
         .btn-start { border-color: var(--cyber-groen); color: var(--cyber-groen); }
+        .btn-start:hover { box-shadow: var(--glow-groen); }
         .btn-stop { border-color: #555; color: #888; }
         .actief .btn-stop { border-color: var(--cyber-rood); color: var(--cyber-rood); }
+        .actief .btn-stop:hover { box-shadow: var(--glow-rood); }
 
         .vervoer-box { display: flex; grid-column: 1/-1; background: #000; border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 6px; overflow: hidden; padding: 2px; }
         .vervoer-box input { display: none; }
         .vervoer-box label { flex: 1; text-align: center; padding: 12px; cursor: pointer; opacity: 0.4; font-weight: bold; border-radius: 4px; transition: 0.3s; }
-        .vervoer-box input:checked + label { opacity: 1; color: var(--cyber-blauw); border: 1px solid var(--cyber-blauw); }
+        .vervoer-box input:checked + label { opacity: 1; color: var(--cyber-blauw); border: 1px solid var(--cyber-blauw); text-shadow: 0 0 8px var(--cyber-blauw); }
 
         .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
         footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10, 12, 18, 0.95); backdrop-filter: blur(15px); border-top: 1px solid var(--cyber-blauw); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 1500; }
 
-        @keyframes holo-scan { 0% { top: -100%; } 100% { top: 100%; } }
+        .status-txt-center { position: absolute; left: 50%; transform: translateX(-50%); font-family: 'Orbitron'; font-size: 0.65rem; color: #fff; text-shadow: 0 0 5px #000; pointer-events: none; white-space: nowrap; opacity: 0.9; }
+
         @keyframes holo-deploy { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes holo-remove { 0% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(50px); filter: blur(10px); } }
 
+        /* PAUZE TIMER STYLING */
+        #pauze-wrap { display: flex; align-items: center; background: rgba(255, 170, 0, 0.1); border: 1px solid var(--cyber-oranje); border-radius: 6px; padding: 0 10px; flex: 1; }
+        #pauze-display { font-family: 'Orbitron'; color: var(--cyber-oranje); font-size: 0.8rem; margin-left: 8px; min-width: 65px; }
+
+        /* PRINT STYLES */
         #print-area { display: none; }
         @media print {
+            @page { margin: 1cm; }
             body > *:not(#print-area) { display: none !important; }
-            #print-area { display: block !important; color: #000; background: #fff; padding: 20px; font-family: sans-serif; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #000; padding: 8px; text-align: left; font-size: 12px; }
-            th { background: #eee; }
+            #print-area { display: block !important; color: #000; background: #fff; font-family: 'Segoe UI', sans-serif; }
+            .print-header { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
+            .print-title { font-size: 24pt; font-weight: bold; text-transform: uppercase; }
+            .print-meta { font-size: 10pt; text-align: right; }
+            .klant-sectie { margin-bottom: 30px; border: 1px solid #ccc; padding: 10px; break-inside: avoid; }
+            .klant-titel { background: #f0f0f0; padding: 5px 10px; font-weight: bold; font-size: 14pt; border-bottom: 1px solid #000; margin: -10px -10px 10px -10px; display: flex; justify-content: space-between; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            th { background: #eee; text-align: left; padding: 8px; border: 1px solid #000; font-size: 10pt; }
+            td { padding: 8px; border: 1px solid #ccc; font-size: 9pt; vertical-align: top; }
+            .totalen { margin-top: 20px; text-align: right; font-size: 14pt; font-weight: bold; border-top: 2px double #000; padding-top: 10px; }
         }
     </style>
 </head>
 <body>
 
 <div id="print-area">
-    <h1>Productieverslag</h1>
-    <p id="p-meta"></p>
-    <table id="p-tabel"></table>
+    <div class="print-header">
+        <div class="print-title">Productieverslag</div>
+        <div class="print-meta">
+            <strong>Medewerker:</strong> <span id="p-op"></span><br>
+            <strong>Datum:</strong> <span id="p-datum"></span><br>
+            <strong>Vervoer:</strong> <span id="p-vervoer"></span>
+        </div>
+    </div>
+    <div id="p-body"></div>
+    <div class="totalen">Totaal gewerkte uren: <span id="p-totaal"></span>u</div>
 </div>
 
 <header>
@@ -148,8 +182,12 @@
             <input type="radio" name="tr" id="a" value="Wagen" onchange="save()">
             <label for="a">🚗 WAGEN</label>
         </div>
-        <div class="search-wrap">
+        <div class="search-wrap" style="display: flex; gap: 10px;">
             <input type="text" id="q" placeholder="ZOEK KLANT OF DOSSIER..." oninput="search()">
+            <div id="pauze-wrap">
+                <button class="btn-cyber" id="btn-global-pauze" style="width: 40px; border: none; color: var(--cyber-oranje); padding:0;" onclick="globalPause()" title="Pauzeer alle timers">⏸</button>
+                <div id="pauze-display">00:00:00</div>
+            </div>
             <div id="archiefLijst"></div>
         </div>
     </div>
@@ -168,21 +206,57 @@
 <script>
     const TYPES = ["Raam kader", "Raam vleugel", "Deur kader", "Deur vleugel", "Schuifraam kader", "Schuifraam vleugel", "T-profiel", "Glaslatten", "Beslag", "Opkuisen", "Montage", "Andere"];
     let timers = {}; 
+    let pauzeTimer = null;
+    let pauzeSec = 0;
 
     function getBelgianDate() { return new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Brussels' }); }
+
+    // AUTO-STOP CHECKER (16:15)
+    setInterval(() => {
+        const nu = new Date();
+        const tijdStr = nu.getHours().toString().padStart(2, '0') + ":" + nu.getMinutes().toString().padStart(2, '0');
+        if (tijdStr === "16:15" && Object.keys(timers).length > 0) {
+            globalPause();
+        }
+    }, 1000);
+
+    function globalPause() {
+        Object.keys(timers).forEach(rid => timer(rid, false));
+        startPauzeTimer();
+    }
+
+    function startPauzeTimer() {
+        if(pauzeTimer) return;
+        document.getElementById('pauze-wrap').style.background = 'rgba(255, 170, 0, 0.3)';
+        pauzeTimer = setInterval(() => {
+            pauzeSec++;
+            document.getElementById('pauze-display').innerText = fmt(pauzeSec);
+        }, 1000);
+    }
+
+    function stopPauzeTimer() {
+        clearInterval(pauzeTimer);
+        pauzeTimer = null;
+        document.getElementById('pauze-wrap').style.background = 'rgba(255, 170, 0, 0.1)';
+    }
 
     function save() {
         const d = document.getElementById('dag').value;
         const data = {
             op: document.getElementById('op').value,
             tr: document.querySelector('input[name="tr"]:checked').value,
+            pSec: pauzeSec,
             klanten: [...document.querySelectorAll('.kaart:not(.removing)')].map(c => ({
                 id: c.id, n: c.querySelector('.in-n').value, d: c.querySelector('.in-d').value,
-                st: c.dataset.status || '', col: c.classList.contains('ingeklapt'),
+                col: c.classList.contains('ingeklapt'),
                 rijen: [...c.querySelectorAll('.r:not(.removing)')].map(r => ({
                     t: r.querySelector('.s-t').value, u: r.querySelector('.i-u').value,
                     o: r.querySelector('.i-o').value, s: parseInt(r.dataset.sec) || 0, id: r.id,
-                    run: !!timers[r.id], st: r.dataset.start || ''
+                    run: !!timers[r.id], st: r.dataset.status || 'fout', col: r.classList.contains('ingeklapt'),
+                    startT: r.dataset.start || '',
+                    sub: [...r.querySelectorAll('.sub-item')].map(si => ({
+                        l: si.querySelector('.si-l').value, v: si.querySelector('.si-v').checked, x: si.querySelector('.si-x').checked
+                    }))
                 }))
             }))
         };
@@ -193,17 +267,20 @@
     function load() {
         Object.values(timers).forEach(clearInterval);
         timers = {};
+        stopPauzeTimer();
         document.getElementById('lijst').innerHTML = '';
         const raw = localStorage.getItem('urenV35_' + document.getElementById('dag').value);
         if (raw) {
             const data = JSON.parse(raw);
             document.getElementById('op').value = data.op || '';
+            pauzeSec = data.pSec || 0;
+            document.getElementById('pauze-display').innerText = fmt(pauzeSec);
             if(data.tr) document.getElementById(data.tr === 'Fiets' ? 'f' : 'a').checked = true;
             data.klanten.forEach(k => {
                 addKlant(k);
-                k.rijen.forEach(r => { if(r.run) timer(r.id, true, r.st); });
+                k.rijen.forEach(r => { if(r.run) timer(r.id, true, r.startT); });
             });
-        } else { addKlant(null, true); }
+        } else { pauzeSec = 0; document.getElementById('pauze-display').innerText = '00:00:00'; addKlant(null, true); }
         calc();
     }
 
@@ -219,10 +296,7 @@
                 const datum = k.split('_')[1];
                 data.klanten.forEach(kl => { 
                     if(kl.n.toLowerCase().includes(v) || kl.d.toLowerCase().includes(v)) {
-                        h += `<div class="zoek-optie" onclick="jump('${datum}')">
-                                <b>${kl.n}</b>
-                                <span class="dos-label">DOSSIER: ${kl.d || 'GEEN'} | DATUM: ${datum}</span>
-                              </div>`;
+                        h += `<div class="zoek-optie" onclick="jump('${datum}')"><b>${kl.n}</b><br><small>${datum}</small></div>`;
                     }
                 });
             }
@@ -231,17 +305,18 @@
         r.classList.add('open');
     }
 
-    function jump(d) { document.getElementById('dag').value = d; load(); document.getElementById('archiefLijst').classList.remove('open'); document.getElementById('q').value = ''; }
+    function jump(d) { document.getElementById('dag').value = d; load(); document.getElementById('archiefLijst').classList.remove('open'); }
 
     function addKlant(data = null, isNew = false) {
-        if (isNew) document.querySelectorAll('.kaart').forEach(k => k.classList.add('ingeklapt'));
         const id = data?.id || 'k' + Date.now();
         const html = `
-            <div class="kaart status-${data?.st || ''} ${data?.col ? 'ingeklapt' : ''}" id="${id}" data-status="${data?.st || ''}">
+            <div class="kaart ${data?.col ? 'ingeklapt' : ''}" id="${id}">
                 <div class="kaart-h" onclick="tgl('${id}')">
                     <div style="flex:1">
-                        <h3><span class="n-txt">${data?.n || 'Nieuwe Klant'}</span> <small>[<span class="d-txt">${data?.d || '---'}</span>]</small></h3>
+                        <h3 style="font-size: 0.9rem;"><span class="n-txt">${data?.n || 'Klant'}</span></h3>
+                        <small style="opacity: 0.7; font-family: 'Orbitron'; font-size: 0.6rem;">#<span class="d-txt">${data?.d || '---'}</span></small>
                     </div>
+                    <div class="status-txt-center k-perc">0% VOLTOOID</div>
                     <div style="font-family:'Orbitron'; color:var(--cyber-blauw);"><span class="k-u">0.00</span>u</div>
                 </div>
                 <div class="kaart-anim-wrapper">
@@ -249,14 +324,10 @@
                         <div class="kaart-b">
                             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px">
                                 <input type="text" class="in-n" value="${data?.n || ''}" placeholder="Naam" oninput="sync('${id}')">
-                                <input type="text" class="in-d" value="${data?.d || ''}" placeholder="Dossier" oninput="sync('${id}')">
+                                <input type="text" class="in-d" value="${data?.d || ''}" placeholder="Dossier" oninput="checkHistory('${id}', this.value)">
                             </div>
                             <div class="rijen"></div>
                             <button class="btn-cyber" style="border-style:dashed; margin-bottom:10px" onclick="addRij('${id}')">+ REGEL TOEVOEGEN</button>
-                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px">
-                                <button class="btn-cyber" style="border-color:var(--cyber-groen); color:var(--cyber-groen)" onclick="setS('${id}','voltooid')">GEREED</button>
-                                <button class="btn-cyber" style="border-color:var(--cyber-rood); color:var(--cyber-rood)" onclick="setS('${id}','fout')">FOUT</button>
-                            </div>
                             <button class="btn-cyber" style="border-color:#444; color:#888; font-size:0.7rem;" onclick="wisKlant('${id}')">KLANT VERWIJDEREN</button>
                         </div>
                     </div>
@@ -264,32 +335,130 @@
             </div>`;
         document.getElementById('lijst').insertAdjacentHTML('beforeend', html);
         if(data?.rijen) data.rijen.forEach(r => addRij(id, r)); else addRij(id);
-        if(isNew) save();
+    }
+
+    function checkHistory(kid, dossier) {
+        sync(kid);
+        if(dossier.length < 3) return;
+        const huidigeDatum = document.getElementById('dag').value;
+        let laatsteData = null;
+        let laatsteDatumStr = "";
+        const keys = Object.keys(localStorage).filter(k => k.startsWith('urenV35_') && k !== 'urenV35_' + huidigeDatum).sort().reverse();
+        for(let key of keys) {
+            const d = JSON.parse(localStorage.getItem(key));
+            const match = d.klanten.find(k => k.d === dossier);
+            if(match) { laatsteData = match; laatsteDatumStr = key.split('_')[1]; break; }
+        }
+        if(laatsteData && confirm(`Dossier gevonden op ${laatsteDatumStr}. Wil je de regels overnemen?`)) {
+            const kaart = document.getElementById(kid);
+            kaart.querySelector('.rijen').innerHTML = '';
+            kaart.querySelector('.in-n').value = laatsteData.n;
+            laatsteData.rijen.forEach(r => {
+                const nieuweR = JSON.parse(JSON.stringify(r));
+                nieuweR.u = "0.00"; nieuweR.s = 0; nieuweR.run = false;
+                addRij(kid, nieuweR);
+            });
+            sync(kid);
+        }
     }
 
     function addRij(kid, r = null) {
         const rid = r?.id || 'r' + Math.random().toString(36).substr(2,5);
+        const status = r?.st || 'fout';
         const html = `
-            <div class="r" id="${rid}" data-sec="${r?.s || 0}" data-start="${r?.st || ''}">
-                <div class="timer-unit"><div class="timer-display">${fmt(r?.s || 0)}</div></div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px">
-                    <button class="btn-cyber btn-start" onclick="timer('${rid}', true)">START</button>
-                    <button class="btn-cyber btn-stop" onclick="timer('${rid}', false)">STOP</button>
+            <div class="r status-${status} ${r?.col ? 'ingeklapt' : ''}" id="${rid}" data-sec="${r?.s || 0}" data-start="${r?.startT || ''}" data-status="${status}">
+                <div class="r-header" onclick="tglR('${rid}')">
+                    <span class="r-type-label">${r?.t || 'Selecteer type...'}</span>
+                    <div class="status-txt-center r-perc">0% VOLTOOID</div>
+                    <span style="font-size:0.5rem; opacity:0.8; font-family:'Orbitron';">STATUS %</span>
                 </div>
-                <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:8px">
-                    <select class="s-t" onchange="save()">${TYPES.map(t => `<option ${r?.t === t ? 'selected' : ''}>${t}</option>`).join('')}</select>
-                    <input type="number" class="i-u" value="${r?.u || '0.00'}" step="0.25" oninput="save()">
+                <div class="r-anim-wrapper">
+                    <div class="r-content">
+                        <div class="r-inner-box">
+                            <div class="timer-unit"><div class="timer-display">${fmt(r?.s || 0)}</div></div>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px">
+                                <button class="btn-cyber btn-start" onclick="timer('${rid}', true)">START</button>
+                                <button class="btn-cyber btn-stop" onclick="timer('${rid}', false)">STOP</button>
+                            </div>
+                            <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:8px">
+                                <select class="s-t" onchange="syncR('${rid}')">
+                                    <option value="" disabled ${!r?.t ? 'selected' : ''}>Kies type...</option>
+                                    ${TYPES.map(t => `<option ${r?.t === t ? 'selected' : ''}>${t}</option>`).join('')}
+                                </select>
+                                <input type="number" class="i-u" value="${r?.u || '0.00'}" step="0.25" oninput="save()">
+                            </div>
+                            <div style="margin-top:15px; background: rgba(110, 0, 255, 0.1); padding: 10px; border-radius: 6px;">
+                                <label style="font-size: 0.7rem; color: var(--cyber-blauw); font-family: 'Orbitron';">AANTAL ITEMS:</label>
+                                <input type="number" class="sub-count" value="${r?.sub?.length || 0}" min="0" onchange="genSub('${rid}')" style="margin-top:5px; height:35px;">
+                                <div class="sub-items-lijst"></div>
+                            </div>
+                            <textarea class="i-o" placeholder="Opmerking..." oninput="save()" style="margin-top:15px; height:40px">${r?.o || ''}</textarea>
+                            <button class="btn-cyber" style="border:none; color:var(--cyber-rood); font-size:0.65rem; margin-top:10px" onclick="wisRij('${rid}')">VERWIJDER REGEL</button>
+                        </div>
+                    </div>
                 </div>
-                <textarea class="i-o" placeholder="Opmerking..." oninput="save()" style="margin-top:8px; height:40px">${r?.o || ''}</textarea>
-                <button class="btn-cyber" style="border:none; color:var(--cyber-rood); font-size:0.65rem; margin-top:5px" onclick="wisRij('${rid}')">VERWIJDER REGEL</button>
             </div>`;
         document.getElementById(kid).querySelector('.rijen').insertAdjacentHTML('beforeend', html);
+        if(r?.sub) {
+            const container = document.getElementById(rid).querySelector('.sub-items-lijst');
+            r.sub.forEach(si => container.insertAdjacentHTML('beforeend', subHtml(si.l, si.v, si.x)));
+        }
+        updateRegelKleur(rid);
+    }
+
+    function subHtml(label = '', vink = false, fout = false) {
+        return `<div class="sub-item">
+            <input type="checkbox" class="si-v" ${vink ? 'checked' : ''} onchange="tglVink(this, 'v')" title="OK">
+            <input type="text" class="si-l" value="${label}" placeholder="Label" oninput="save()">
+            <input type="checkbox" class="si-x" ${fout ? 'checked' : ''} onchange="tglVink(this, 'x')" title="NIET OK">
+        </div>`;
+    }
+
+    function tglVink(el, type) {
+        const p = el.parentElement;
+        if(type === 'v' && el.checked) p.querySelector('.si-x').checked = false;
+        if(type === 'x' && el.checked) p.querySelector('.si-v').checked = false;
+        updateRegelKleur(el.closest('.r').id);
+        save();
+    }
+
+    function updateRegelKleur(rid) {
+        const r = document.getElementById(rid);
+        const subs = r.querySelectorAll('.sub-item');
+        const header = r.querySelector('.r-header');
+        const percLabel = r.querySelector('.r-perc');
+        if (subs.length === 0) { header.style.background = 'rgba(255,255,255,0.03)'; percLabel.innerText = "0% VOLTOOID"; return; }
+        let nG = 0, nR = 0, nO = 0;
+        subs.forEach(si => {
+            if (si.querySelector('.si-v').checked) nG++;
+            else if (si.querySelector('.si-x').checked) nR++;
+            else nO++;
+        });
+        const tot = subs.length;
+        const pG = (nG/tot)*100, pR = (nR/tot)*100, pO = (nO/tot)*100;
+        percLabel.innerText = `${Math.round(pG)}% VOLTOOID`;
+        header.style.background = `linear-gradient(90deg, rgba(0,255,102,0.4) ${pG}%, rgba(255,170,0,0.4) ${pG}% ${pG+pO}%, rgba(255,0,60,0.4) ${pG+pO}% 100%)`;
+        if(nR > 0) r.className = r.className.replace(/status-\w+/, 'status-fout');
+        else if(nG === tot) r.className = r.className.replace(/status-\w+/, 'status-voltooid');
+        else r.className = r.className.replace(/status-\w+/, 'status-progress');
+    }
+
+    function genSub(rid) {
+        const r = document.getElementById(rid);
+        const count = parseInt(r.querySelector('.sub-count').value) || 0;
+        const container = r.querySelector('.sub-items-lijst');
+        const currentCount = container.querySelectorAll('.sub-item').length;
+        const typeNaam = r.querySelector('.s-t').value || "Item";
+        if(count > currentCount) { for(let i = currentCount + 1; i <= count; i++) { container.insertAdjacentHTML('beforeend', subHtml(`${typeNaam} ${i}`, false, false)); }
+        } else { const items = container.querySelectorAll('.sub-item'); for(let i = items.length - 1; i >= count; i--) items[i].remove(); }
+        updateRegelKleur(rid);
+        save();
     }
 
     function timer(rid, s, forceStart = null) {
         const el = document.getElementById(rid);
-        if(!el) return;
         if(s) {
+            stopPauzeTimer();
             if(timers[rid]) return;
             el.dataset.start = forceStart || Date.now();
             el.classList.add('actief');
@@ -299,8 +468,7 @@
             }, 1000);
         } else {
             if(timers[rid]) {
-                clearInterval(timers[rid]);
-                delete timers[rid];
+                clearInterval(timers[rid]); delete timers[rid];
                 el.dataset.sec = (parseInt(el.dataset.sec) || 0) + Math.floor((Date.now() - parseInt(el.dataset.start)) / 1000);
                 el.dataset.start = '';
                 el.querySelector('.i-u').value = (Math.round((parseInt(el.dataset.sec)/3600)*4)/4).toFixed(2);
@@ -310,25 +478,87 @@
         save();
     }
 
-    function wisRij(rid) { if(timers[rid]) { clearInterval(timers[rid]); delete timers[rid]; } const el = document.getElementById(rid); el.classList.add('removing'); setTimeout(() => { el.remove(); save(); }, 400); }
-    function wisKlant(kid) { if(confirm("Klant volledig verwijderen?")) { const el = document.getElementById(kid); el.querySelectorAll('.r').forEach(r => { if(timers[r.id]) { clearInterval(timers[r.id]); delete timers[r.id]; } }); el.classList.add('removing'); setTimeout(() => { el.remove(); save(); }, 400); } }
-    function tgl(id) { if(!event.target.closest('input, button, select, textarea')) { document.getElementById(id).classList.toggle('ingeklapt'); save(); } }
-    function sync(id) { const c = document.getElementById(id); c.querySelector('.n-txt').innerText = c.querySelector('.in-n').value || 'Klant'; c.querySelector('.d-txt').innerText = c.querySelector('.in-d').value || '---'; save(); }
-    function setS(id, s) { const c = document.getElementById(id); c.dataset.status = s; c.className = `kaart status-${s} ingeklapt`; save(); }
+    function syncR(rid) { const r = document.getElementById(rid); r.querySelector('.r-type-label').innerText = r.querySelector('.s-t').value; save(); }
+    function tglR(rid) { document.getElementById(rid).classList.toggle('ingeklapt'); save(); }
+    function wisRij(rid) { const el = document.getElementById(rid); el.classList.add('removing'); setTimeout(() => { el.remove(); save(); }, 400); }
+    function wisKlant(kid) { if(confirm("Klant verwijderen?")) { const el = document.getElementById(kid); el.classList.add('removing'); setTimeout(() => { el.remove(); save(); }, 400); } }
+    function tgl(id) { if(!event.target.closest('input, button, select, textarea, .r')) { document.getElementById(id).classList.toggle('ingeklapt'); save(); } }
+    function sync(id) { 
+        const c = document.getElementById(id); 
+        c.querySelector('.n-txt').innerText = c.querySelector('.in-n').value || 'Klant'; 
+        c.querySelector('.d-txt').innerText = c.querySelector('.in-d').value || '---';
+        save(); 
+    }
     function fmt(s) { return `${Math.floor(s/3600).toString().padStart(2,'0')}:${Math.floor((s%3600)/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`; }
-    function calc() { let dag = 0; document.querySelectorAll('.kaart:not(.removing)').forEach(c => { let k = 0; c.querySelectorAll('.i-u').forEach(i => k += parseFloat(i.value) || 0); c.querySelector('.k-u').innerText = k.toFixed(2); dag += k; }); document.getElementById('u-bot').innerText = dag.toFixed(2); document.getElementById('u-top').innerText = dag.toFixed(2); }
+    
+    function calc() {
+        let dag = 0;
+        document.querySelectorAll('.kaart:not(.removing)').forEach(c => {
+            let k = 0;
+            const rijen = c.querySelectorAll('.r:not(.removing)');
+            let nG = 0, nO = 0, nR = 0;
+            rijen.forEach(r => {
+                k += parseFloat(r.querySelector('.i-u').value) || 0;
+                const subs = r.querySelectorAll('.sub-item');
+                if(subs.length > 0) {
+                    let rOk = 0, rX = 0;
+                    subs.forEach(si => { if(si.querySelector('.si-v').checked) rOk++; if(si.querySelector('.si-x').checked) rX++; });
+                    if(rX > 0) nR++; else if(rOk === subs.length) nG++; else nO++;
+                } else { nO++; }
+            });
+            const header = c.querySelector('.kaart-h');
+            const kPercLabel = c.querySelector('.k-perc');
+            if(rijen.length > 0) {
+                const pG = (nG/rijen.length)*100, pO = (nO/rijen.length)*100;
+                header.style.background = `linear-gradient(90deg, rgba(0,255,102,0.3) ${pG}%, rgba(255,170,0,0.3) ${pG}% ${pG+pO}%, rgba(255,0,60,0.2) ${pG+pO}% 100%)`;
+                kPercLabel.innerText = `${Math.round(pG)}% VOLTOOID`;
+            } else { kPercLabel.innerText = "0% VOLTOOID"; }
+            c.querySelector('.k-u').innerText = k.toFixed(2);
+            dag += k;
+        });
+        document.getElementById('u-bot').innerText = dag.toFixed(2);
+        document.getElementById('u-top').innerText = dag.toFixed(2);
+    }
 
     function printMe() {
-        const tr = document.querySelector('input[name="tr"]:checked').value;
-        document.getElementById('p-meta').innerHTML = `<b>Medewerker:</b> ${document.getElementById('op').value} | <b>Datum:</b> ${document.getElementById('dag').value} | <b>Vervoer:</b> ${tr} | <b>Totaal:</b> ${document.getElementById('u-bot').innerText}u`;
-        let h = '<tr><th>Klant</th><th>Dossier</th><th>Werkzaamheid</th><th>Uren</th><th>Opmerking</th></tr>';
-        document.querySelectorAll('.kaart').forEach(k => {
-            const kn = k.querySelector('.in-n').value; const kd = k.querySelector('.in-d').value;
-            k.querySelectorAll('.r').forEach(r => { 
-                h += `<tr><td>${kn}</td><td>${kd}</td><td>${r.querySelector('.s-t').value}</td><td>${r.querySelector('.i-u').value}u</td><td>${r.querySelector('.i-o').value}</td></tr>`; 
+        document.getElementById('p-op').innerText = document.getElementById('op').value || 'Onbekend';
+        document.getElementById('p-datum').innerText = document.getElementById('dag').value;
+        document.getElementById('p-vervoer').innerText = document.querySelector('input[name="tr"]:checked').value;
+        document.getElementById('p-totaal').innerText = document.getElementById('u-bot').innerText;
+        
+        let html = '';
+        document.querySelectorAll('.kaart:not(.removing)').forEach(k => {
+            html += `<div class="klant-sectie">
+                <div class="klant-titel">
+                    <span>${k.querySelector('.in-n').value || 'Geen naam'} (#${k.querySelector('.in-d').value || '---'})</span>
+                    <span>${k.querySelector('.k-u').innerText}u</span>
+                </div>
+                <table>
+                    <thead><tr><th width="20%">Taak</th><th width="30%">Status</th><th width="40%">Opmerking</th><th width="10%">Tijd</th></tr></thead>
+                    <tbody>`;
+            k.querySelectorAll('.r:not(.removing)').forEach(r => {
+                let nG = 0, nR = 0, nO = 0;
+                const subs = r.querySelectorAll('.sub-item');
+                subs.forEach(si => {
+                    if(si.querySelector('.si-v').checked) nG++;
+                    else if(si.querySelector('.si-x').checked) nR++;
+                    else nO++;
+                });
+
+                const statusTxt = subs.length > 0 ? 
+                    `Voltooid: ${nG} / Fout: ${nR} / In progress: ${nO}` : 
+                    `Geen items`;
+
+                html += `<tr>
+                    <td><strong>${r.querySelector('.s-t').value}</strong></td>
+                    <td>${statusTxt}</td>
+                    <td>${r.querySelector('.i-o').value}</td>
+                    <td>${r.querySelector('.i-u').value}u</td>
+                </tr>`;
             });
+            html += `</tbody></table></div>`;
         });
-        document.getElementById('p-tabel').innerHTML = h;
+        document.getElementById('p-body').innerHTML = html;
         window.print();
     }
 
